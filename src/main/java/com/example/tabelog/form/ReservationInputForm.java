@@ -1,6 +1,7 @@
 package com.example.tabelog.form;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +19,9 @@ public class ReservationInputForm {
 
 	// 予約日を取得する
 	public LocalDate getReservationDateForLocalDate() {
-		return LocalDate.parse(reservationDate);
+		if (reservationDate == null || reservationDate.isEmpty()) {
+	        throw new IllegalArgumentException("Reservation date cannot be null or empty");
+	    }
+		return LocalDate.parse(reservationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 	}
 }
