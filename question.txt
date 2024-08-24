@@ -1,4 +1,3 @@
-en2/org/codehaus/plexus/plexus/10/plexus-10.pom (25 kB at 8.5 MB/s)
 remote:        [INFO] Downloading from central: https://repo.maven.apache.org/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.pom
 remote:        [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.pom (20 kB at 6.6 MB/s)      
 remote:        [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/junit-bom/5.7.2/junit-bom-5.7.2.pom
@@ -386,12 +385,12 @@ remote:        [INFO] BUILD FAILURE
 remote:        [INFO] ------------------------------------------------------------------------
 remote:        [INFO] Total time:  7.583 s
 remote:        [INFO] Finished at: 2024-08-24T10:09:49Z
-remote:  ! If you are developing on a branch and deploying via git you must runremote:  !
-remote:  !     git push heroku <branchname>:mainremote:  !remote:  ! This article goes into details on the behavior:
-remote:  !   https://devcenter.heroku.com/articles/duplicate-build-version
-remote:remote: Verifying deploy...
-remote:remote: !       Push rejected to tabelog.
+remote:  !   https://devcenter.heroku.com/articles/duplicate-build-versionremote:
+remote: Verifying deploy...remote:remote: !       Push rejected to tabelog.
 remote:
 To https://git.heroku.com/tabelog.git ! [remote rejected] main -> main (pre-receive hook declined)
 error: failed to push some refs to 'https://git.heroku.com/tabelog.git'
+C:\pleiades\2024-03\eclipse\kadai_002\tabelog>
+C:\pleiades\2024-03\eclipse\kadai_002\tabelog>git branch -r
+  origin/main
 C:\pleiades\2024-03\eclipse\kadai_002\tabelog>
