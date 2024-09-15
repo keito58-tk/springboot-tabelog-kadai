@@ -93,6 +93,14 @@
 			<version>26.0.0</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>4.0.1</version>
+		    <scope>provided</scope>
+		</dependency>
+
+		
 	</dependencies>
 
 	<build>
@@ -113,8 +121,8 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
-                <source>17</source>
-                <target>17</target> 
+                <source>${java.version}</source>
+                <target>${java.version}</target> 
             </configuration>
         </plugin>
 		</plugins>
