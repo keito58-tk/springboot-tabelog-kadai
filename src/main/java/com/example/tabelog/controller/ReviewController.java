@@ -33,7 +33,8 @@ public ReviewController(ReviewService reviewService, UserService userService, St
 
 // 店舗のレビューを表示するメソッド
 @GetMapping
-public String getReviewsForStore(@PathVariable Long storeId, Model model) {
+public String getReviewsForStore(
+	@PathVariable Long storeId, Model model) {
 	Store store = storeService.findById(storeId);
     List<Review> reviews = reviewService.getReviewsForStore(storeId);
 
@@ -50,7 +51,8 @@ public String getReviewsForStore(@PathVariable Long storeId, Model model) {
 
 // レビューを作成するメソッド
 @PostMapping("/register")
-public String createReview(@PathVariable Long storeId, @RequestParam String comment,
+public String createReview(
+						   @PathVariable Long storeId, @RequestParam String comment,
                            @RequestParam int rating) {
     Long userId = userService.getLoggedInUserId();
     reviewService.createReview(storeId, userId, comment, rating);
@@ -59,7 +61,8 @@ public String createReview(@PathVariable Long storeId, @RequestParam String comm
 
 // レビュー編集ページを表示するメソッド
 @GetMapping("/{reviewId}/edit")
-public String editReview(@PathVariable Long storeId, 
+public String editReview(
+						 @PathVariable Long storeId, 
 						 @PathVariable Long reviewId, 
 						 Model model) {
     Review review = reviewService.findById(reviewId);
@@ -69,7 +72,9 @@ public String editReview(@PathVariable Long storeId,
 
 // レビューを削除するメソッド
 @PostMapping("/{reviewId}/delete")
-public String deleteReview(@PathVariable Long storeId, @PathVariable Long reviewId) {
+public String deleteReview(
+		@PathVariable Long storeId, 
+		@PathVariable Long reviewId) {
     reviewService.deleteReview(reviewId);
     return "redirect:/stores/" + storeId + "/reviews";
 }
