@@ -77,5 +77,15 @@ public class UserService {
     public boolean isEmailChanged(UserEditForm userEditForm) {
         User currentUser = userRepository.getReferenceById(userEditForm.getId());
         return !userEditForm.getEmail().equals(currentUser.getEmail());      
-    } 
+    }
+
+	public User findById(Long userId) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	public Long getLoggedInUserId() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	} 
 }

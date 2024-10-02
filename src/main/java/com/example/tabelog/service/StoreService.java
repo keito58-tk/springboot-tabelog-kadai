@@ -114,4 +114,9 @@ public class StoreService {
 		}
 		
 	}
+
+	public Store findById(Long storeId) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
 }

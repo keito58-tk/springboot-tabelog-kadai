@@ -90,3 +90,11 @@ INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reserv
 INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (9, 9, 1, 5, '2024-08-15');
 INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (10, 10, 1, 6, '2024-08-17');
 INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (11, 11, 1, 2, '2024-08-18');
+
+
+-- reviewsテーブル
+INSERT IGNORE INTO reviews (id, store_id, user_id, comment, rating) VALUES (1, 1, 1, "素晴らしいメニューでした", 5);
+INSERT IGNORE INTO reviews (id, store_id, user_id, comment, rating) VALUES (2, 2, 2, "癖になる味でした", 4);
+
+
+
