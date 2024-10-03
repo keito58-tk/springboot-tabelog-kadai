@@ -37,13 +37,12 @@ public String getReviewsForStore(
 	@PathVariable Long storeId, Model model) {
 	Store store = storeService.findById(storeId);
     List<Review> reviews = reviewService.getReviewsForStore(storeId);
+    Long userId = userService.getLoggedInUserId();
+    boolean userHasReviews = reviewService.userHasReviewed(userId, storeId);
 
     model.addAttribute("store", store);
     model.addAttribute("reviews", reviews);
     model.addAttribute("storeHasReviews", !reviews.isEmpty());
-
-    Long userId = userService.getLoggedInUserId();
-    boolean userHasReviews = reviewService.userHasReviewed(userId, storeId);
     model.addAttribute("userHasReviews", userHasReviews);
 
     return "reviews";
