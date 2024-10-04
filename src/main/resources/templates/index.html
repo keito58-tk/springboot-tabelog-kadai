@@ -55,46 +55,7 @@
 	                           </a>            
 	                       </div>                                               
 	                   </div>
-	                   
-						
-					   <h2 class="text-center mb-3">レビュー</h2>
-					   
-					   <div sec:authorize="isAuthenticated()">
-							<div th:if="${!userHasReviews}" class="non-review-button">
-								<button type="button" class="btn  shadow-sm tabelog-btn">
-									<a th:href="@{/stores/${store.id}/reviews/register}" class="btn shadow-sm tabelog-btn text-white">レビューを投稿する</a>
-								</button>
-							</div>
-                       </div>
-					   
-					   <div class="container">
-						    <div class="row">
-						        <div class="col-md-6" th:each="review : ${reviews}">
-						            <div class="card m-1">
-						                <div class="card-body">
-						                    <div>
-						                        <h4 th:text="${review.user.name}">ユーザー名</h4>
-						                        <div class="rating">
-						                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:class="${i <= review.rating} ? 'rated-star' : 'unrated-star'" th:text="${i <= review.rating} ? '&#9733;' : '&#9734;'">&#9733;</span>
-						                        </div>
-						                        <p th:text="${#dates.format(review.createdAt, 'yyyy年MM月dd日')}"></p>
-						                        <h5 th:text="${review.comment}" class="m-1">コメント</h5>
-						                    </div>
-						                    <div th:if="${review.user.id == #authentication.principal.user.id}" class="button">
-						                        <a th:href="@{/stores/{storeId}/reviews/{reviewId}/edit(storeId=${store.id}, reviewId=${review.id})}"class="btn btn-primary text-center">編集</a>
-												<button type="button" class="btn btn-danger delete-review-button" th:attr="data-review-id=${review.id}, data-store-id=${store.id}">削除</button>
-						                    </div>
-						                </div>
-						            </div>
-						        </div>
-						    </div>
-					   </div>
-						<div th:if="${storeHasReviews}" class="watch">
-                            <a th:href="@{/stores/{storeId}/reviews(storeId=${store.id})}">すべてのレビューを見る</a>
-                        </div>
-                        <div th:unless="${storeHasReviews}">
-                            <p class="text-center">まだレビューがありません</p>
-                        </div>
+
 					   
 	                   <div class="row justify-content-center">
 	                       <div class="col-xl-5 col-lg-6 col-md-8">                    
