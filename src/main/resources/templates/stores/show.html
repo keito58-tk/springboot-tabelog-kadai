@@ -147,45 +147,52 @@
 									  
 									  
 									  <h2 class="text-center mb-3">レビュー</h2>
-									  					   
-				  					   <div sec:authorize="isAuthenticated()">
-				  							<div th:if="${!userHasReviews}" class="non-review-button">
-				  								<button type="button" class="btn  shadow-sm tabelog-btn">
-				  									<a th:href="@{/stores/${store.id}/reviews/register}" class="btn shadow-sm tabelog-btn text-white">レビューを投稿する</a>
-				  								</button>
-				  							</div>
-				                         </div>
-				  					   
-				  					   <div class="container">
-				  						    <div class="row">
-				  						        <div class="col-md-6" th:each="review : ${reviews}">
-				  						            <div class="card m-1">
-				  						                <div class="card-body">
-				  						                    <div>
-				  						                        <h4 th:text="${review.user.name}">ユーザー名</h4>
-				  						                        <div class="rating">
-				  						                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:class="${i <= review.rating} ? 'rated-star' : 'unrated-star'" th:text="${i <= review.rating} ? '&#9733;' : '&#9734;'">&#9733;</span>
-				  						                        </div>
-				  						                        <p th:text="${#dates.format(review.createdAt, 'yyyy年MM月dd日')}"></p>
-				  						                        <h5 th:text="${review.comment}" class="m-1">コメント</h5>
-				  						                    </div>
-				  						                    <div th:if="${review.user.id == #authentication.principal.user.id}" class="button">
-				  						                        <a th:href="@{/stores/{storeId}/reviews/{reviewId}/edit(storeId=${store.id}, reviewId=${review.id})}"class="btn btn-primary text-center">編集</a>
-				  												<button type="button" class="btn btn-danger delete-review-button" th:attr="data-review-id=${review.id}, data-store-id=${store.id}">削除</button>
-				  						                    </div>
-				  						                </div>
-				  						            </div>
-				  						        </div>
-				  						    </div>
-				  					   </div>
-				  						<div th:if="${storeHasReviews}" class="watch">
-				                              <a th:href="@{/stores/{storeId}/reviews(storeId=${store.id})}">すべてのレビューを見る</a>
-				                          </div>
-				                          <div th:unless="${storeHasReviews}">
-				                              <p class="text-center">まだレビューがありません</p>
-				                          </div>
 									  
-									              
+									  <div sec:authorize="isAnonymous()" class="row row-cols-lg-5 row-cols-2 g-3 mb-5">
+										<div class="col">
+											<p>レビューを投稿するには<a th:href="@{/login}">ログイン</a>が必要です。</p>
+											<button type="submit" class="btn text-white shadow-sm w-100 tabelog-btn" disabled>レビューを投稿する</button>
+										</div>                 
+  									  </div>
+
+									  <div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">
+											<div class="card">
+												<div class="card-body">
+													<form method="post" th:action="@{stores/{storeId}/reviews/register}" th:object="${reviewForm}">
+														<div class="form-group row row-cols-lg-5 row-cols-1 g-3 mb-5">
+															<label for="comment">コメント</label>
+															<input type="text" th:field="*{comment}" class="form-control"></input>
+															<!-- エラーメッセージの表示 -->
+														    <div th:if="${#fields.hasErrors('comment')}" class="text-danger">
+														        <p th:errors="*{comment}"></p>
+														    </div>
+														</div>
+														<div class="form-group">
+															<label for="rating">評価</label>
+															<select id="rating" th:field="*{rating}" class="form-control">
+																<option value="1">&#9734;</option>
+																<option value="2">&#9734;&#9734;</option>
+																<option value="3">&#9734;&#9734;&#9734;</option>
+																<option value="4">&#9734;&#9734;&#9734;&#9734;</option>
+																<option value="5">&#9734;&#9734;&#9734;&#9734;&#9734;</option>
+															</select>
+														</div>
+														<button type="submit" class="btn btn-primary">レビューを送信</button>
+												  	</form>
+												</div>
+											</div>
+									  </div>
+									  
+				  						<div th:if="${storeHasReviews}" class="watch">
+											<h3 class="text-center">レビュー一覧</h3>
+											<div th:each="review : ${store.reviews}">
+												<p><span th:text="${review.comment}">コメント</span></p>
+												<p>評価： <span th:utext="'&#9733;'.repeat(${review.rating}) + '&#9734;'.repeat(5 - ${review.rating})"></span></p>
+											</div>
+										</div>
+				                        <div th:unless="${storeHasReviews}">
+				                            <p class="text-center">まだレビューがありません</p>
+				                        </div>
                                  </div>                                                                                             
                              </div>
                          </div>

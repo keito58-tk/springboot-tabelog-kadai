@@ -18,7 +18,8 @@ import com.example.tabelog.repository.StoreRepository;
 @Controller
 @RequestMapping("/stores")
 public class StoreController {
-	private final StoreRepository storeRepository;        
+	private final StoreRepository storeRepository; 
+	
     
     public StoreController(StoreRepository storeRepository) {
         this.storeRepository = storeRepository;            
@@ -71,11 +72,13 @@ public class StoreController {
     }
     
     @GetMapping("/{id}")
-    public String show(@PathVariable(name = "id") Integer id, Model model) {
+    public String show(@PathVariable(name = "id") Integer id, Model model ) {
         Store store = storeRepository.getReferenceById(id);
         
         model.addAttribute("store", store);
         model.addAttribute("reservationInputForm", new ReservationInputForm());
+        
+    
         
         return "stores/show";
     }

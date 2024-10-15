@@ -79,13 +79,20 @@ public class UserService {
         return !userEditForm.getEmail().equals(currentUser.getEmail());      
     }
 
-	public User findById(Long userId) {
+	public User getLoggedInUserId() {
 		// TODO 自動生成されたメソッド・スタブ
 		return null;
 	}
 
-	public Long getLoggedInUserId() {
+	public User findById(User userId) {
 		// TODO 自動生成されたメソッド・スタブ
 		return null;
-	} 
+	}
+
+	public User findByEmail(String name) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+
 }

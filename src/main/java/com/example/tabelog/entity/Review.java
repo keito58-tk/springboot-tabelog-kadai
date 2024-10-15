@@ -29,8 +29,10 @@ public class Review {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 	
+	@Column(name = "comment")
 	private String comment;
 	
+	@Column(name = "rating")
 	private int rating;
 	
 	@Column(name = "created_at", nullable = false)
