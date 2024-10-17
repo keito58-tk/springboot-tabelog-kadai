@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewForm {
-	
 	@NotBlank(message = "コメントしてください。")
     private String comment;
 	

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.tabelog.entity.Review;
 import com.example.tabelog.entity.Store;
@@ -31,6 +32,7 @@ public class ReviewController {
 	private final UserService userService;
 	private final StoreService storeService;
 	private final ReviewService reviewService;
+	
 	public ReviewController(ReviewService reviewService, UserService userService, StoreService storeService) {
     this.userService = userService;
     this.storeService = storeService;
@@ -52,17 +54,17 @@ public String getReviewsForStore(
 // レビュー登録フォームを表示するメソッド
 @GetMapping("/register")
 public String showReviewForm(
-							@PathVariable Long storeId,
+							@RequestParam Long storeId,
 							Model model) {
 	model.addAttribute("reviewForm", new ReviewForm());
 	model.addAttribute("storeId", storeId);
 	
-	return "reviews/register";
+	return "reviews";
 }
 // レビューを作成するメソッド
 @PostMapping("/register")
 public String createReview(
-						   @PathVariable Long storeId, 
+						   @RequestParam Long storeId, 
 						   @ModelAttribute("reviewForm")
 						   @Valid ReviewForm reviewForm,
 						   BindingResult bindingResult, Model model) {
@@ -96,6 +98,7 @@ public String editReview(
 	Review review = reviewService.findById(reviewId);
 	model.addAttribute("review", review);
 	model.addAttribute("storeId", storeId);
+	
     return "reviews/edit-review";
 }
 
@@ -105,6 +108,7 @@ public String deleteReview(
 						   @PathVariable Long storeId, 
 						   @PathVariable Long reviewId) {
     reviewService.deleteReview(reviewId);
+    
     return "redirect:/stores/" + storeId + "/reviews";
 }
 
