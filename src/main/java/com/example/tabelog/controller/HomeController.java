@@ -20,6 +20,8 @@ public class HomeController {
 	@GetMapping("/")
 	public String index(Model model) {
 		List<Store> newStores = storeRepository.findTop10ByOrderByCreatedAtDesc();
+		
+		
         model.addAttribute("newStores", newStores); 
 		
 		return "index";

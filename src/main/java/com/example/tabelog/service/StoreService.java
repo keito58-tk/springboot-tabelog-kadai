@@ -5,9 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -22,15 +26,18 @@ import com.example.tabelog.repository.StoreRepository;
 @Service
 public class StoreService {
 	private final StoreRepository storeRepository;
+	private final CategoryStoreService categoryStoreService;
 	
-	public StoreService(StoreRepository storeRepository) {
+	public StoreService(StoreRepository storeRepository, CategoryStoreService categoryStoreService) {
 		this.storeRepository = storeRepository;
+		this.categoryStoreService = categoryStoreService;
 	}
 	
 	@Transactional
-	public void create(StoreRegisterForm storeRegisterForm) {
+	public void createStore(StoreRegisterForm storeRegisterForm) {
 		Store store = new Store();
 		MultipartFile imageFile = storeRegisterForm.getImageFile();
+		List<Integer> categoryIds = storeRegisterForm.getCategoryIds();
 		
 		if (!imageFile.isEmpty()) {
 			String imageName = imageFile.getOriginalFilename();
@@ -60,12 +67,16 @@ public class StoreService {
 		
 		storeRepository.save(store);
 
+		if (categoryIds != null) {
+            categoryStoreService.createCategoriesStores(categoryIds, store);
+        }
 	}
 	
 	@Transactional
 	public void update(StoreEditForm storeEditForm) {
 		Store store = storeRepository.getReferenceById(storeEditForm.getId());
 		MultipartFile imageFile = storeEditForm.getImageFile();
+		List<Integer> categoryIds = storeEditForm.getCategoryIds();
 		
 		if (!imageFile.isEmpty()) {
 			String imageName = imageFile.getOriginalFilename();
@@ -94,6 +105,8 @@ public class StoreService {
 		store.setPriceMin(storeEditForm.getPriceMin());
 		
 		storeRepository.save(store);
+		
+		categoryStoreService.syncCategoriesStores(categoryIds, store);
 	}
 
 	private String generateNewFileName(String fileName) {
@@ -115,9 +128,34 @@ public class StoreService {
 		
 	}
 
-	public Store findById(Long storeId) {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+	@Transactional(readOnly = true)
+    public Optional<Store> findById(Long storeId) {
+        return storeRepository.findById(storeId);
+    }
+
+	public Optional<Store> findStoreById(Integer storeId) {
+	    return storeRepository.findById(storeId);
 	}
 
+	// 価格が正しく設定されているかどうかをチェックする
+    public boolean isValidPrices(Integer lowestPrice, Integer highestPrice) {
+        return highestPrice >= lowestPrice;
+    }
+
+    // 営業時間が正しく設定されているかどうかをチェックする
+    public boolean isValidBusinessHours(String openingTime, String closingTime) {
+        try {
+            // String型のopeningTimeとclosingTimeをLocalTime型に変換
+            LocalTime opening = LocalTime.parse(openingTime);
+            LocalTime closing = LocalTime.parse(closingTime);
+
+            // 営業終了時間が営業開始時間より後かどうかを確認
+            return closing.isAfter(opening);
+        } catch (DateTimeParseException e) {
+            // 例外が発生した場合（フォーマットが正しくない場合）はfalseを返す
+        	System.out.println("時間のフォーマットが正しくありません: " + e.getMessage());
+            return false;
+        }
+    }
+    
 }

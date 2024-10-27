@@ -1,6 +1,6 @@
 package com.example.tabelog.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,8 +35,11 @@ public class Review {
 	@Column(name = "rating")
 	private int rating;
 	
-	@Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+	@Column(name = "created_at", insertable = false, updatable = false)
+    private Timestamp createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
+    private Timestamp updatedAt;
 	
-	
+    
 }

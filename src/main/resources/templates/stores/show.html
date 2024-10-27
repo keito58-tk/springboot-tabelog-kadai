@@ -109,7 +109,22 @@
                                              <div class="col">
                                                  <span th:text="${store.getPhoneNumber()}"></span>
                                              </div>
-                                         </div>                                
+                                         </div> 
+										 
+										 <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-2">
+                                                 <span class="fw-bold">カテゴリ</span>
+                                             </div>
+ 
+                                             <div class="col d-flex">
+                                                 <div th:unless="${store.categoriesStores.isEmpty()}">
+                                                     <span th:each="categoryStore, stat : ${store.categoriesStores}" th:if="${stat.first}" th:text="${categoryStore.category.name}"></span><span th:each="categoryStore, stat : ${store.categoriesStores}" th:unless="${stat.first}" th:text="${'、' + categoryStore.category.name}"></span>
+                                                 </div>
+                                                 <div th:if="${store.categoriesStores.isEmpty()}">
+                                                     <span>未設定</span>
+                                                 </div>
+                                             </div>
+                                         </div>                               
                                      </div>
                                      
                                      <div sec:authorize="isAnonymous()" class="col-lg-4 px-0 ps-lg-4 mb-4">                  
@@ -155,44 +170,40 @@
 										</div>                 
   									  </div>
 
-									  <div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">
-											<div class="card">
-												<div class="card-body">
-													<form method="post" th:action="@{/stores/__${store.getId()}__/reviews/register}" th:object="${reviewForm}">
-														<div class="form-group mb-2">
-															<label for="comment" class="col-form-label text-md-left fw-bold">コメント</label>
-															<div th:if="${#fields.hasErrors('comment')}" class="text-danger small mb-2" th:errors="*{comment}"></div>  
-<!--															test-->
-															<p th:text="${reviewForm.comment}">コメント</p>
-															                                        
-															<input type="text" class="form-control" th:field="*{comment}">
-														</div>
-														<div class="form-group">
-															<label for="rating">評価</label>
-															<select id="rating" th:field="*{rating}" class="form-control">
-																<option value="1">&#9734;</option>
-																<option value="2">&#9734;&#9734;</option>
-																<option value="3">&#9734;&#9734;&#9734;</option>
-																<option value="4">&#9734;&#9734;&#9734;&#9734;</option>
-																<option value="5">&#9734;&#9734;&#9734;&#9734;&#9734;</option>
-															</select>
-														</div>
-														<button type="submit" class="btn btn-primary">レビューを送信</button>
-												  	</form>
-												</div>
-											</div>
-									  </div>
-									  
-				  						<div th:if="${storeHasReviews}" class="watch">
-											<h3 class="text-center">レビュー一覧</h3>
-											<div th:each="review : ${store.reviews}">
-												<p><span th:text="${review.comment}">コメント</span></p>
-												<p>評価： <span th:utext="'&#9733;'.repeat(${review.rating}) + '&#9734;'.repeat(5 - ${review.rating})"></span></p>
-											</div>
-										</div>
-				                        <div th:unless="${storeHasReviews}">
-				                            <p class="text-center">まだレビューがありません</p>
-				                        </div>
+<!--									  <div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">-->
+<!--											<div class="card">-->
+<!--												<div class="card-body">-->
+<!--													<form method="post" th:action="@{/stores/__${store.getId()}__/review}" th:object="${reviewForm}">-->
+<!--														<div class="form-group mb-2">-->
+<!--															<label for="comment" class="col-form-label text-md-left fw-bold">コメント</label>-->
+<!--															<div th:if="${#fields.hasErrors('comment')}" class="text-danger small mb-2" th:errors="*{comment}"></div>  -->
+<!--															<input type="text" class="form-control" th:field="*{comment}">-->
+<!--														</div>-->
+<!--														<div class="form-group">-->
+<!--															<label for="rating">評価</label>-->
+<!--															<select id="rating" th:field="*{rating}" class="form-control">-->
+<!--																<option value="1">&#9734;</option>-->
+<!--																<option value="2">&#9734;&#9734;</option>-->
+<!--																<option value="3">&#9734;&#9734;&#9734;</option>-->
+<!--																<option value="4">&#9734;&#9734;&#9734;&#9734;</option>-->
+<!--																<option value="5">&#9734;&#9734;&#9734;&#9734;&#9734;</option>-->
+<!--															</select>-->
+<!--														</div>-->
+<!--														<button type="submit" class="btn btn-primary">レビューを送信</button>-->
+<!--												  	</form>-->
+<!--												</div>-->
+<!--											</div>-->
+<!--									  </div>-->
+<!--			  						  <div th:if="${storeHasReviews}" class="watch">-->
+<!--										<h3 class="text-center">レビュー一覧</h3>-->
+<!--										<div th:each="review : ${store.reviews}">-->
+<!--											<p><span th:text="${review.comment}">コメント</span></p>-->
+<!--											<p>評価： <span th:utext="'&#9733;'.repeat(${review.rating}) + '&#9734;'.repeat(5 - ${review.rating})"></span></p>-->
+<!--										</div>-->
+<!--									  </div>-->
+<!--			                          <div th:unless="${storeHasReviews}">-->
+<!--			                            <p class="text-center">まだレビューがありません</p>-->
+<!--			                          </div>-->
                                  </div>                                                                                             
                              </div>
                          </div>

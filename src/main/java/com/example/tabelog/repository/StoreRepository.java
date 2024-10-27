@@ -1,6 +1,7 @@
 package com.example.tabelog.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,16 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
      public Page<Store> findAllByOrderByPriceMaxAsc(Pageable pageable);
      
      public List<Store> findTop10ByOrderByCreatedAtDesc();
+     
+     
+//  // すべての店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
+//     @Query("SELECT r FROM Store s " +
+//            "LEFT JOIN s.reviews rev " +
+//            "GROUP BY s.id " +
+//            "ORDER BY AVG(rev.score) DESC")
+//     public Page<Store> findAllByOrderByAverageRatingDesc(Pageable pageable);
+
+     public Optional<Store> findById(Long storeId);
+     
+     
 }

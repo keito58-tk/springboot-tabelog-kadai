@@ -25,7 +25,8 @@
 						
 						<h1 class="mb-4 text-center">店舗登録</h1>
 						
-						<form method="post" th:action="@{/admin/stores/create}" th:object="${storeRegisterForm}" enctype="multipart/form-data">
+						<form method="post" action="#" th:action="@{/admin/stores/create}" th:object="${storeRegisterForm}" enctype="multipart/form-data">
+							<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 							<div class="form-group row mb-3">
 								<div class="col-md-4">
 									<label for="name" class="col-form-label text-md-left fw-bold">店舗名</label>
@@ -132,6 +133,24 @@
 									<input type="text" class="form-control" th:field="*{phoneNumber}">
 								</div>
 							</div>
+							
+							<th:block th:each="i : ${#numbers.sequence(0, 2)}">
+                                <div class="form-group row mb-3">
+                                    <label th:for="${'category' + (i + 1)}" class="col-md-5 col-form-label text-md-left fw-bold" th:text="${'カテゴリ' + (i + 1) + '（3つまで選択可）'}"></label>
+
+                                    <div class="col-md-7">
+                                        <select class="form-control form-select" th:id="${'category' + (i + 1)}" name="categoryIds[]">
+                                            <option value="">選択なし</option>
+											<option th:each="category : ${categories}"
+										            th:value="${category.id}"
+										            th:selected="${storeRegisterForm.categoryIds != null && i < storeRegisterForm.categoryIds.size() ? storeRegisterForm.categoryIds[i] == category.id : false}"
+										            th:text="${category.name}">
+										    </option>
+                                        </select>
+										<div th:if="${#fields.hasErrors('categoryIds')}" th:errors="*{categoryIds}" class="text-danger"></div>
+                                    </div>
+                                </div>
+                            </th:block>
 							
 							<div class="form-group d-flex justify-content-center my-4">
 								<button type="submit" class="btn text-white shadow-sm w-50 tabelog-btn">登録</button>

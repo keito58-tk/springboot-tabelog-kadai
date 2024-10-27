@@ -26,8 +26,6 @@
 							<h1 class="mb-4 text-center">店舗情報編集</h1>
 							
 							<form method="post" th:action="@{/admin/stores/__${storeEditForm.getId()}__/update}" th:object="${storeEditForm}" enctype="multipart/form-data">
-								<input type="hidden" th:field="*{id}">
-								
 								<div class="form-group row mb-3">
 									<div class="col-md-4">
 										<label for="name" class="col-form-label text-md-left fw-bold">店舗名</label>
@@ -139,6 +137,24 @@
 										<input type="text" class="form-control" th:field="*{phoneNumber}">
 									</div>
 								</div>
+								
+								<th:block th:each="i : ${#numbers.sequence(0, 2)}">
+                                    <div class="form-group row mb-3">
+                                        <label th:for="${'category' + (i + 1)}" class="col-md-5 col-form-label text-md-left fw-bold" th:text="${'カテゴリ' + (i + 1) + '（3つまで選択可）'}"></label>
+
+                                        <div class="col-md-7">
+                                            <select class="form-control form-select" th:id="${'category' + (i + 1)}" name="categoryIds[]">
+                                                <option value="">選択なし</option>
+                                                <div th:each="category : ${categories}">
+                                                    <option th:value="${category.id}"
+                                                            th:selected="${storeEditForm.categoryIds != null && i < storeEditForm.categoryIds.size() ? storeEditForm.categoryIds[i] == category.id : false}"
+                                                            th:text="${category.name}"></option>
+                                                </div>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </th:block>
+								
 								<div class="form-group d-flex justify-content-center my-4">
 									<button type="submit" class="btn text-white shadow-sm w-50 tabelog-btn">更新</button>
 								</div>

@@ -1,5 +1,7 @@
 package com.example.tabelog.form;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.Min;
@@ -9,6 +11,9 @@ import lombok.Data;
 
 @Data
 public class StoreRegisterForm {
+	@NotNull
+	private Integer id;
+	
 	@NotBlank(message = "店舗名を入力してください。")
 	private String name;
 	
@@ -45,4 +50,5 @@ public class StoreRegisterForm {
 	@NotBlank(message = "電話番号を入力してください。")
 	private String phoneNumber;
 	
+	private List<Integer> categoryIds;
 }
