@@ -39,8 +39,6 @@ public class StripeService {
     public StripeService(ReservationService reservationService) {
         this.reservationService = reservationService;
         Stripe.apiKey = stripeApiKey;
-        System.out.println("使用するStripe APIキー: " + Stripe.apiKey);
-
     }
 	
 	 // セッションを作成し、Stripeに必要な情報を返す
@@ -112,6 +110,7 @@ public class StripeService {
     private void init() {
         // Stripeのシークレットキーを設定する
         Stripe.apiKey = stripeApiKey;
+        System.out.println("使用するStripe APIキー: " + Stripe.apiKey);
     }
     
  // 顧客（StripeのCustomerオブジェクト）を作成する
