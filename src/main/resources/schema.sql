@@ -32,7 +32,7 @@
      password VARCHAR(255) NOT NULL,    
      role_id INT NOT NULL, 
      enabled BOOLEAN NOT NULL,
-     stripe_customer_id INT NOT NULL,
+     stripe_customer_id VARCHAR(20) NOT NULL,
      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    
      FOREIGN KEY (role_id) REFERENCES roles (id)

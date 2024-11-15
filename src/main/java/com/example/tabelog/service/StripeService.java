@@ -127,26 +127,14 @@ public class StripeService {
 
     // 支払い方法（StripeのPaymentMethodオブジェクト）を顧客（StripeのCustomerオブジェクト）に紐づける
     public void attachPaymentMethodToCustomer(String paymentMethodId, String customerId) throws StripeException {
-    	Stripe.apiKey = stripeApiKey;
-    	try {
-            // 支払い方法を取得する
-            PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
-            
-            // 支払い方法を顧客に紐づけるためのパラメータを作成
-            PaymentMethodAttachParams paymentMethodAttachParams = PaymentMethodAttachParams.builder()
-                .setCustomer(customerId)
-                .build();
-            
-            // 支払い方法を顧客に紐づける
-            paymentMethod.attach(paymentMethodAttachParams);
-            
-            System.out.println("支払い方法が顧客に正常に紐づけられました。");
+    	// 支払い方法を紐づける顧客
+        PaymentMethodAttachParams paymentMethodAttachParams =
+            PaymentMethodAttachParams.builder()
+            .setCustomer(customerId)
+            .build();
 
-        } catch (StripeException e) {
-            // エラーハンドリング: ログ出力や通知を追加
-            System.err.println("支払い方法の紐づけに失敗しました。顧客ID: " + customerId + ", エラー: " + e.getMessage());
-            throw e;  // 必要であれば、再度例外をスローして上位で処理
-        }
+        PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
+        paymentMethod.attach(paymentMethodAttachParams);
     }
 
     // 顧客（StripeのCustomerオブジェクト）のデフォルトの支払い方法（StripeのPaymentMethodオブジェクト）を設定する

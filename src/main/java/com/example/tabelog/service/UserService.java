@@ -17,17 +17,21 @@ import com.example.tabelog.form.SignupForm;
 import com.example.tabelog.form.UserEditForm;
 import com.example.tabelog.repository.RoleRepository;
 import com.example.tabelog.repository.UserRepository;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
 
 @Service
 public class UserService {
 	private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final StripeService stripeService;
     
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, StripeService stripeService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;        
         this.passwordEncoder = passwordEncoder;
+		this.stripeService = stripeService;
     }    
     
     @Transactional
@@ -44,6 +48,15 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(signupForm.getPassword()));
         user.setRole(role);
         user.setEnabled(false);        
+        
+        try {
+            // 新しいStripe顧客を作成して、stripeCustomerIdを設定
+            Customer customer = stripeService.createCustomer(user);
+            user.setStripeCustomerId(customer.getId());
+        } catch (StripeException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Stripe顧客の作成に失敗しました");
+        }
         
         return userRepository.save(user);
     }   
@@ -124,6 +137,11 @@ public class UserService {
 
         // 認証情報を更新する
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+    }
+
+	@Transactional
+    public void save(User user) {
+        userRepository.save(user);
     }
 
 
