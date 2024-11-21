@@ -6,6 +6,5 @@ let maxDate = new Date();
    locale: 'ja',
    minDate: 'today',
    maxDate: maxDate,
-   enableTime: true,
-  dateFormat: "Y-m-d H:i"
+
  });

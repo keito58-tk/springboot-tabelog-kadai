@@ -14,19 +14,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.tabelog.entity.Store;
 import com.example.tabelog.form.ReservationInputForm;
 import com.example.tabelog.repository.StoreRepository;
+import com.example.tabelog.service.StoreService;
 
 @Controller
 @RequestMapping("/stores")
 public class StoreController {
 	private final StoreRepository storeRepository; 
-	
+	private final StoreService storeService;
     
-    public StoreController(StoreRepository storeRepository) {
-        this.storeRepository = storeRepository;            
+    public StoreController(StoreRepository storeRepository, StoreService storeService) {
+        this.storeRepository = storeRepository;
+        this.storeService = storeService;
     }     
   
     @GetMapping
     public String index(@RequestParam(name = "keyword", required = false) String keyword,
+    					@RequestParam(name = "categoryId", required = false) Integer categoryId,
                         @RequestParam(name = "area", required = false) String area,
                         @RequestParam(name = "priceMax", required = false) Integer priceMax,
                         @RequestParam(name = "order", required = false) String order,
@@ -38,32 +41,42 @@ public class StoreController {
         if (keyword != null && !keyword.isEmpty()) {
         	if (order != null && order.equals("priceMaxAsc")) {
                 storePage = storeRepository.findByNameLikeOrAddressLikeOrderByPriceMaxAsc("%" + keyword + "%", "%" + keyword + "%", pageable);
+        	} else if (order != null && order.equals("ratingDesc")) {
+                storePage = storeService.findStoresByNameLikeOrAddressLikeOrCategoryNameLikeOrderByAverageRatingDesc(keyword, keyword, keyword, pageable);
             } else {
                 storePage = storeRepository.findByNameLikeOrAddressLikeOrderByCreatedAtDesc("%" + keyword + "%", "%" + keyword + "%", pageable);
             }
         } else if (area != null && !area.isEmpty()) {
         	if (order != null && order.equals("priceMaxAsc")) {
         		storePage = storeRepository.findByAddressLikeOrderByPriceMaxAsc("%" + area + "%", pageable);
+        	} else if (order != null && order.equals("ratingDesc")) {
+                storePage = storeService.findStoresByCategoryIdOrderByAverageRatingDesc(categoryId, pageable);
             } else {
             	storePage = storeRepository.findByAddressLikeOrderByCreatedAtDesc("%" + area + "%", pageable);
             }
         } else if (priceMax != null) {
         	if (order != null && order.equals("priceMaxAsc")) {
         		storePage = storeRepository.findByPriceMaxLessThanEqualOrderByPriceMaxAsc(priceMax, pageable);
+        	} else if (order != null && order.equals("ratingDesc")) {
+                storePage = storeService.findStoresByPriceMinLessThanEqualOrderByAverageRatingDesc(priceMax, pageable);
             } else {
             	storePage = storeRepository.findByPriceMaxLessThanEqualOrderByCreatedAtDesc(priceMax, pageable);
             }
         } else {
         	 if (order != null && order.equals("priceMaxAsc")) {
         		 storePage = storeRepository.findAllByOrderByPriceMaxAsc(pageable);
+        	 } else if (order != null && order.equals("ratingDesc")) {
+                 storePage = storeService.findAllStoresByOrderByAverageRatingDesc(pageable);
              } else {
             	 storePage = storeRepository.findAllByOrderByCreatedAtDesc(pageable);   
              }
         
         }                
         
+        
         model.addAttribute("storePage", storePage);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("area", area);
         model.addAttribute("priceMax", priceMax);
         model.addAttribute("order", order);

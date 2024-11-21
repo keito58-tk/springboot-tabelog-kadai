@@ -22,11 +22,11 @@ public class Review {
 	private Integer id;
 	
 	@ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 	
 	@ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id")
     private Store store;
 	
 	@Column(name = "comment")

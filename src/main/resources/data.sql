@@ -63,6 +63,9 @@ VALUES (30, 'カフェ＆ダイニング 風のささやき', 'store30.jpg', '�
 -- rolesテーブル
 INSERT IGNORE INTO roles (id, name) VALUES (1, 'ROLE_GENERAL');
 INSERT IGNORE INTO roles (id, name) VALUES (2, 'ROLE_ADMIN');
+INSERT IGNORE INTO roles (id, name) VALUES (3, 'ROLE_FREE_MEMBER');
+INSERT IGNORE INTO roles (id, name) VALUES (4, 'ROLE_PAID_MEMBER');
+
 
 -- usersテーブル
 INSERT IGNORE INTO users (id, name, furigana, postal_code, address, phone_number, email, password, role_id, enabled, stripe_customer_id) VALUES (1, '侍 太郎', 'サムライ タロウ', '101-0022', '東京都千代田区神田練塀町300番地', '090-1234-5678', 'taro.samurai@example.com', '$2a$10$2JNjTwZBwo7fprL2X4sv.OEKqxnVtsVQvuXDkI8xVGix.U3W5B7CO', 1, true, 'cus_abcd1234567890ab');

@@ -33,6 +33,18 @@
                                  <span th:text="${errorMessage}"></span>
                              </div>                                                                         
                              
+							 <ul class="nav nav-tabs mb-2">
+                                 <li class="nav-item">
+                                     <a class="nav-link active text-white tabelog-bg" aria-current="page" th:href="@{/stores/__${store.id}__}">トップ</a>
+                                 </li>
+                                 <li class="nav-item">
+                                     <a class="nav-link link-dark" th:href="@{/stores/__${store.id}__/reservations/register}">予約</a>
+                                 </li>
+                                 <li class="nav-item">
+                                     <a class="nav-link link-dark" th:href="@{/stores/__${store.id}__/review}">レビュー</a>
+                                 </li>
+                             </ul>
+							 
                              <div class="mb-4">
                                  <img th:if="${store.getImageName()}" th:src="@{/storage/__${store.getImageName()}__}" class="w-100" alt="店舗画像">
                                  <img th:unless="${store.getImageName()}" th:src="@{/images/noImage.png}" class="w-100" alt="NO IMAGE">
@@ -159,51 +171,7 @@
                                               </div>
                                           </div>  
                                       </div> 
-									  
-									  
-									  <h2 class="text-center mb-3">レビュー</h2>
-									  
-									  <div sec:authorize="isAnonymous()" class="row row-cols-lg-5 row-cols-2 g-3 mb-5">
-										<div class="col">
-											<p>レビューを投稿するには<a th:href="@{/login}">ログイン</a>が必要です。</p>
-											<button type="submit" class="btn text-white shadow-sm w-100 tabelog-btn" disabled>レビューを投稿する</button>
-										</div>                 
-  									  </div>
 
-<!--									  <div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">-->
-<!--											<div class="card">-->
-<!--												<div class="card-body">-->
-<!--													<form method="post" th:action="@{/stores/__${store.getId()}__/review}" th:object="${reviewForm}">-->
-<!--														<div class="form-group mb-2">-->
-<!--															<label for="comment" class="col-form-label text-md-left fw-bold">コメント</label>-->
-<!--															<div th:if="${#fields.hasErrors('comment')}" class="text-danger small mb-2" th:errors="*{comment}"></div>  -->
-<!--															<input type="text" class="form-control" th:field="*{comment}">-->
-<!--														</div>-->
-<!--														<div class="form-group">-->
-<!--															<label for="rating">評価</label>-->
-<!--															<select id="rating" th:field="*{rating}" class="form-control">-->
-<!--																<option value="1">&#9734;</option>-->
-<!--																<option value="2">&#9734;&#9734;</option>-->
-<!--																<option value="3">&#9734;&#9734;&#9734;</option>-->
-<!--																<option value="4">&#9734;&#9734;&#9734;&#9734;</option>-->
-<!--																<option value="5">&#9734;&#9734;&#9734;&#9734;&#9734;</option>-->
-<!--															</select>-->
-<!--														</div>-->
-<!--														<button type="submit" class="btn btn-primary">レビューを送信</button>-->
-<!--												  	</form>-->
-<!--												</div>-->
-<!--											</div>-->
-<!--									  </div>-->
-<!--			  						  <div th:if="${storeHasReviews}" class="watch">-->
-<!--										<h3 class="text-center">レビュー一覧</h3>-->
-<!--										<div th:each="review : ${store.reviews}">-->
-<!--											<p><span th:text="${review.comment}">コメント</span></p>-->
-<!--											<p>評価： <span th:utext="'&#9733;'.repeat(${review.rating}) + '&#9734;'.repeat(5 - ${review.rating})"></span></p>-->
-<!--										</div>-->
-<!--									  </div>-->
-<!--			                          <div th:unless="${storeHasReviews}">-->
-<!--			                            <p class="text-center">まだレビューがありません</p>-->
-<!--			                          </div>-->
                                  </div>                                                                                             
                              </div>
                          </div>

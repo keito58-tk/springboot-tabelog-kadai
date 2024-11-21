@@ -27,7 +27,6 @@ import com.example.tabelog.form.StoreEditForm;
 import com.example.tabelog.form.StoreRegisterForm;
 import com.example.tabelog.repository.StoreRepository;
 import com.example.tabelog.service.CategoryService;
-import com.example.tabelog.service.CategoryStoreService;
 import com.example.tabelog.service.StoreService;
 
 @Controller
@@ -36,13 +35,11 @@ public class AdminStoreController {
 	private final StoreRepository storeRepository;
 	private final StoreService storeService;
 	private final CategoryService categoryService;
-	private final CategoryStoreService categoryStoreService;
 	
-	public AdminStoreController(StoreRepository storeRepository, StoreService storeService, CategoryService categoryService, CategoryStoreService categoryStoreService) {
+	public AdminStoreController(StoreRepository storeRepository, StoreService storeService, CategoryService categoryService) {
 		this.storeRepository = storeRepository;
 		this.storeService = storeService;
 		this.categoryService = categoryService;
-		this.categoryStoreService = categoryStoreService;
 	}
 	
 	@GetMapping

@@ -1,18 +1,12 @@
 const stripe = Stripe('pk_test_51PWI2ZRwbHQlEjnL8fDq1zfgUoHHTRCBOZ3EjxnfPhPgqGvTZ6JtdGHL2uD4pSmrJ8Ijo8szA7tKgshbusVMhH2A00AwwJ4Wpl');
 
-//const paymentButton = document.querySelector('#paymentButton');
- 
+
 const elements = stripe.elements();
 const cardElement = elements.create('card');
 cardElement.mount('#cardElement');
 
 const cardButton = document.getElementById('cardButton');
-// paymentButton.addEventListener('click', () => {
-//   stripe.redirectToCheckout({
-//     sessionId: sessionId
-//   })
-// });
-// 
+
  cardButton.addEventListener('click', function(e) {
   e.preventDefault();
 

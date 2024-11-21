@@ -172,6 +172,8 @@ public class StripeService {
 
     // 顧客（StripeのCustomerオブジェクト）のデフォルトの支払い方法（StripeのPaymentMethodオブジェクト）を取得する
     public PaymentMethod getDefaultPaymentMethod(String customerId) throws StripeException {
+    	// Stripeのシークレットキーを設定する
+        Stripe.apiKey = stripeApiKey;
         Customer customer = Customer.retrieve(customerId);
         String defaultPaymentMethodId = customer.getInvoiceSettings().getDefaultPaymentMethod();
         return PaymentMethod.retrieve(defaultPaymentMethodId);
@@ -179,6 +181,8 @@ public class StripeService {
 
     // 顧客（StripeのCustomerオブジェクト）のデフォルトの支払い方法（StripeのPaymentMethodオブジェクト）のIDを取得する
     public String getDefaultPaymentMethodId(String customerId) throws StripeException {
+    	// Stripeのシークレットキーを設定する
+        Stripe.apiKey = stripeApiKey;
         Customer customer = Customer.retrieve(customerId);
         return customer.getInvoiceSettings().getDefaultPaymentMethod();
     }

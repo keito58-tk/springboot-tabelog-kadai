@@ -89,92 +89,33 @@ public class SubscriptionController {
         return "redirect:/";
     }
 
-//    @GetMapping("/edit")
-//    public String edit(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, RedirectAttributes redirectAttributes, Model model) {
-//        User user = userDetailsImpl.getUser();
-//
-//        try {
-//            // 顧客のデフォルトの支払い方法（StripeのPaymentMethodオブジェクト）を取得する
-//            PaymentMethod paymentMethod = stripeService.getDefaultPaymentMethod(user.getStripeCustomerId());
-//
-//            model.addAttribute("card", paymentMethod.getCard());
-//            model.addAttribute("cardHolderName", paymentMethod.getBillingDetails().getName());
-//        } catch (StripeException e) {
-//            redirectAttributes.addFlashAttribute("errorMessage", "お支払い方法を取得できませんでした。再度お試しください。");
-//
-//            return "redirect:/";
-//        }
-//
-//        return "subscription/edit";
-//    }
     @GetMapping("/edit")
-    public String edit(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-
+    public String edit(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, RedirectAttributes redirectAttributes, Model model) {
         User user = userDetailsImpl.getUser();
-
+        String stripeCustomerId = user.getStripeCustomerId();
+        
         try {
-            String stripeCustomerId = user.getStripeCustomerId();
-
-            // 顧客IDが設定されていない場合の処理
-            if (stripeCustomerId == null || stripeCustomerId.isEmpty()) {
-            	System.out.println("StripeCustomerId is null or empty, creating new customer.");
+        	if (stripeCustomerId == null || stripeCustomerId.isEmpty()) {
                 // 新しい顧客を作成
                 Customer customer = stripeService.createCustomer(user);
                 stripeCustomerId = customer.getId();
-
-                // 顧客IDをUserエンティティに保存
-                user.setStripeCustomerId(stripeCustomerId);
-                userService.save(user);
-
-                redirectAttributes.addFlashAttribute("successMessage", "新しいStripe顧客IDが作成され、保存されました。");
-            } else {
-                // 既存の顧客IDが有効か確認
-                try {
-                    Customer.retrieve(stripeCustomerId);
-                } catch (StripeException e) {
-                    if ("resource_missing".equals(e.getCode())) {
-                        redirectAttributes.addFlashAttribute("errorMessage", "無効な顧客IDが使用されています。新しい顧客IDを登録します。");
-
-                        // 新しい顧客を作成
-                        Customer customer = stripeService.createCustomer(user);
-                        stripeCustomerId = customer.getId();
-
-                        // 新しい顧客IDをUserエンティティに保存
-                        user.setStripeCustomerId(stripeCustomerId);
-                        userService.save(user);
-
-                        redirectAttributes.addFlashAttribute("successMessage", "新しいStripe顧客IDが作成され、保存されました。");
-                    } else {
-                        throw e; // 他の例外は再度スロー
-                    }
-                }
+                userService.saveStripeCustomerId(user, stripeCustomerId);
+                
             }
-
-            // 支払い方法を取得
-            PaymentMethod paymentMethod = stripeService.getDefaultPaymentMethod(stripeCustomerId);
-
-            if (paymentMethod == null || paymentMethod.getCard() == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "お支払い方法が見つかりませんでした。再度お試しください。");
-                return "redirect:/";
-            }
-
+        	
+            // 顧客のデフォルトの支払い方法（StripeのPaymentMethodオブジェクト）を取得する
+            PaymentMethod paymentMethod = stripeService.getDefaultPaymentMethod(user.getStripeCustomerId());
+            
             model.addAttribute("card", paymentMethod.getCard());
             model.addAttribute("cardHolderName", paymentMethod.getBillingDetails().getName());
-
         } catch (StripeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "お支払い情報の取得中にエラーが発生しました。再度お試しください。");
-            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "お支払い方法を取得できませんでした。再度お試しください。");
+            System.out.println("error");
             return "redirect:/";
         }
 
         return "subscription/edit";
     }
-
-
-
 
     @PostMapping("/update")
     public String update(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestParam String paymentMethodId, RedirectAttributes redirectAttributes) {
