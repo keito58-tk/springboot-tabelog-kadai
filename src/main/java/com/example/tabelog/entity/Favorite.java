@@ -1,7 +1,6 @@
 package com.example.tabelog.entity;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,34 +11,27 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-
 @Entity
-@Table(name = "reservations")
+@Table(name = "favorites")
 @Data
-
-public class Reservation {
+public class Favorite {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    
+
     @ManyToOne
     @JoinColumn(name = "store_id")
-    private Store store; 
-    
+    private Store store;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;     
-    
-    @Column(name = "reserved_datetime")
-    private LocalDateTime reservedDatetime;
-    
-    @Column(name = "number_of_people")
-    private Integer numberOfPeople;    
-    
+    private User user;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
-    
+
     @Column(name = "updated_at", insertable = false, updatable = false)
     private Timestamp updatedAt;
 }
+

@@ -1,6 +1,8 @@
 package com.example.tabelog.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,113 +12,148 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.tabelog.entity.Reservation;
 import com.example.tabelog.entity.Store;
 import com.example.tabelog.entity.User;
-import com.example.tabelog.form.ReservationInputForm;
 import com.example.tabelog.form.ReservationRegisterForm;
-import com.example.tabelog.repository.ReservationRepository;
-import com.example.tabelog.repository.StoreRepository;
 import com.example.tabelog.security.UserDetailsImpl;
 import com.example.tabelog.service.ReservationService;
-import com.example.tabelog.service.StripeService;
-
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.tabelog.service.StoreService;
 
 @Controller
 public class ReservationController {
- private final ReservationRepository reservationRepository; 
- private final StoreRepository storeRepository;
- private final ReservationService reservationService;
- private final StripeService stripeService;
- 
-     
-     public ReservationController(ReservationRepository reservationRepository, StoreRepository storeRepository, ReservationService reservationService, StripeService stripeService ) {        
-         this.reservationRepository = reservationRepository; 
-         this. storeRepository = storeRepository;
-         this.reservationService = reservationService;
-         this.stripeService = stripeService;
-     }   
-     
- 
-     @GetMapping("/reservations")
-     public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, Model model) {
-         User user = userDetailsImpl.getUser();
-         Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
-         
-         model.addAttribute("reservationPage", reservationPage);         
-         
-         return "reservations/index";
-     }
-     
-     @GetMapping("/stores/{id}/reservations/input")
-     public String input(@PathVariable(name = "id") Integer id,
-             @ModelAttribute @Validated ReservationInputForm reservationInputForm,
-             BindingResult bindingResult,
-             RedirectAttributes redirectAttributes,
-             Model model)
-	{   
-		Store store = storeRepository.getReferenceById(id);
-		Integer numberOfPeople = reservationInputForm.getNumberOfPeople();   
-		Integer capacity = store.getCapacity();
-		
-		if (numberOfPeople != null) {
-		 if (!reservationService.isWithinCapacity(numberOfPeople, capacity)) {
-		     FieldError fieldError = new FieldError(bindingResult.getObjectName(), "numberOfPeople", "予約人数が席数を超えています。");
-		     bindingResult.addError(fieldError);                
-		 }            
-		}         
-		
-		if (bindingResult.hasErrors()) {            
-		 model.addAttribute("store", store);            
-		 model.addAttribute("errorMessage", "予約内容に不備があります。"); 
-		 return "stores/show";
-		}
-		
-		redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);           
-		
-		return "redirect:/stores/{id}/reservations/confirm";
-	} 
-     
-     @GetMapping("/stores/{id}/reservations/confirm")
-     public String confirm(@PathVariable(name = "id") Integer id,
-                           @ModelAttribute ReservationInputForm reservationInputForm,
-                           @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, 
-                           HttpServletRequest httpServletRequest,
-                           Model model) 
-     {        
-    	 Store store = storeRepository.getReferenceById(id);
-    	 User user = userDetailsImpl.getUser(); 
-                 
-         // 予約日を取得する
-         LocalDate reservationDate = reservationInputForm.getReservationDateForLocalDate();
-  
-         
-         ReservationRegisterForm reservationRegisterForm = new ReservationRegisterForm(store.getId(), user.getId(), reservationDate.toString() , reservationInputForm.getNumberOfPeople());
-         
-         String sessionId = stripeService.createStripeSession(store.getName(), reservationRegisterForm, httpServletRequest);
-         
-         
-         model.addAttribute("store", store);  
-         model.addAttribute("reservationRegisterForm", reservationRegisterForm); 
-         model.addAttribute("sessionId", sessionId);
-         
-         return "reservations/confirm";
-     }  
-     
-     /*
-     @PostMapping("/stores/{id}/reservations/create")
-     public String create(@ModelAttribute ReservationRegisterForm reservationRegisterForm) {                
-         reservationService.create(reservationRegisterForm);        
-         
-         return "redirect:/reservations?reserved";
-     }
-     */
+	private final ReservationService reservationService;
+    private final StoreService storeService;
+
+    public ReservationController(ReservationService reservationService, StoreService storeService) {
+        this.reservationService = reservationService;
+        this.storeService = storeService;
+    }
+
+    @GetMapping("/reservations")
+    public String index(@PageableDefault(page = 0, size = 15, sort = "id", direction = Direction.ASC) Pageable pageable,
+                        @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+                        RedirectAttributes redirectAttributes,
+                        Model model)
+    {
+        User user = userDetailsImpl.getUser();
+
+        if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
+            redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
+
+            return "redirect:/subscription/register";
+        }
+
+        Page<Reservation> reservationPage = reservationService.findReservationsByUserOrderByReservedDatetimeDesc(user, pageable);
+
+        model.addAttribute("reservationPage", reservationPage);
+        model.addAttribute("currentDateTime", LocalDateTime.now());
+
+        return "reservations/index";
+    }
+
+    @GetMapping("/stores/{storeId}/reservations/register")
+    public String register(@PathVariable(name = "storeId") Integer storeId,
+                           @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+                           RedirectAttributes redirectAttributes,
+                           Model model)
+    {
+        User user = userDetailsImpl.getUser();
+
+        if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
+            redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
+
+            return "redirect:/subscription/register";
+        }
+
+        Optional<Store> optionalStore  = storeService.findStoreById(storeId);
+
+        if (optionalStore.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
+
+            return "redirect:/stores";
+        }
+
+        Store store = optionalStore.get();
+
+        model.addAttribute("store", store);
+        model.addAttribute("reservationRegisterForm", new ReservationRegisterForm());
+
+        return "reservations/register";
+    }
+
+    @PostMapping("/stores/{storeId}/reservations/create")
+    public String create(@PathVariable(name = "storeId") Integer storeId,
+                         @ModelAttribute @Validated ReservationRegisterForm reservationRegisterForm,
+                         BindingResult bindingResult,
+                         @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+                         RedirectAttributes redirectAttributes,
+                         Model model)
+    {
+    	
+    	Optional<Store> optionalStore = storeService.findStoreById(storeId);
+        if (optionalStore.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
+            return "redirect:/stores";
+        }
+
+        LocalDate reservationDate = reservationRegisterForm.getReservationDate();
+        if (reservationDate != null && reservationDate.isBefore(LocalDate.now())) {
+            bindingResult.rejectValue("reservationDate", "error.reservationDate", "予約日は今日以降の日付を選択してください。");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("store", optionalStore.get());
+            return "reservations/register";
+        }
+
+        Store store = optionalStore.get();
+        User user = userDetailsImpl.getUser();
+        reservationService.createReservation(reservationRegisterForm, store, user);
+
+        redirectAttributes.addFlashAttribute("successMessage", "予約が完了しました。");
+        return "redirect:/reservations";
+    	}
+
+    	@PostMapping("/reservations/{reservationId}/delete")
+    	public String delete(@PathVariable(name = "reservationId") Integer reservationId,
+                         @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+                         RedirectAttributes redirectAttributes)
+    	{
+        User user = userDetailsImpl.getUser();
+
+        if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
+            redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
+
+            return "redirect:/subscription/register";
+        }
+
+        Optional<Reservation> optionalReservation  = reservationService.findReservationById(reservationId);
+
+        if (optionalReservation.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "予約が存在しません。");
+
+            return "redirect:/reservations";
+        }
+
+        Reservation reservation = optionalReservation.get();
+
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "不正なアクセスです。");
+
+            return "redirect:/reservations";
+        }
+
+        reservationService.deleteReservation(reservation);
+        redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
+
+        return "redirect:/reservations";
+    }
 }

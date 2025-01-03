@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -56,8 +55,8 @@ public class StoreService {
 		        .append(DateTimeFormatter.ISO_LOCAL_TIME)
 		        .parseDefaulting(ChronoField.EPOCH_DAY, 0)
 		        .toFormatter();
-		LocalDateTime openingTime = LocalDateTime.parse(storeRegisterForm.getOpeningTime(), fmt);
-		LocalDateTime closingTime = LocalDateTime.parse(storeRegisterForm.getClosingTime(), fmt);
+		LocalTime openingTime = LocalTime.parse(storeRegisterForm.getOpeningTime(), fmt);
+		LocalTime closingTime = LocalTime.parse(storeRegisterForm.getClosingTime(), fmt);
 		
 		store.setOpeningTime(openingTime);
 		store.setClosingTime(closingTime);
@@ -95,8 +94,8 @@ public class StoreService {
 		        .append(DateTimeFormatter.ISO_LOCAL_TIME)
 		        .parseDefaulting(ChronoField.EPOCH_DAY, 0)
 		        .toFormatter();
-		LocalDateTime openingTime = LocalDateTime.parse(storeEditForm.getOpeningTime(), fmt);
-		LocalDateTime closingTime = LocalDateTime.parse(storeEditForm.getClosingTime(), fmt);
+		LocalTime openingTime = LocalTime.parse(storeEditForm.getOpeningTime(), fmt);
+		LocalTime closingTime = LocalTime.parse(storeEditForm.getClosingTime(), fmt);
 		
 		store.setOpeningTime(openingTime);
 		store.setClosingTime(closingTime);
@@ -130,11 +129,6 @@ public class StoreService {
 		
 	}
 
-	@Transactional(readOnly = true)
-    public Optional<Store> findById(Integer storeId) {
-        return storeRepository.findById(storeId);
-    }
-
 	public Optional<Store> findStoreById(Integer storeId) {
 	    return storeRepository.findById(storeId);
 	}
@@ -160,7 +154,7 @@ public class StoreService {
         }
     }
     
- // すべての店舗を作成日時が新しい順に並べ替え、ページングされた状態で取得する
+    // すべての店舗を作成日時が新しい順に並べ替え、ページングされた状態で取得する
     public Page<Store> findAllStoresByOrderByCreatedAtDesc(Pageable pageable) {
         return storeRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
@@ -175,6 +169,11 @@ public class StoreService {
          return storeRepository.findAllByOrderByAverageRatingDesc(pageable);
      }    
 
+     // すべての店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+     public Page<Store> findAllStoresByOrderByReservationCountDesc(Pageable pageable) {
+         return storeRepository.findAllByOrderByReservationCountDesc(pageable);
+     }
+     
     // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を作成日時が新しい順に並べ替え、ページングされた状態で取得する
     public Page<Store> findStoresByNameLikeOrAddressLikeOrCategoryNameLikeOrderByCreatedAtDesc(String nameKeyword, String addressKeyword, String categoryNameKeyword, Pageable pageable) {
         return storeRepository.findByNameLikeOrAddressLikeOrCategoryNameLikeOrderByCreatedAtDesc(nameKeyword, addressKeyword, categoryNameKeyword, pageable);
@@ -190,6 +189,11 @@ public class StoreService {
          return storeRepository.findByNameLikeOrAddressLikeOrCategoryNameLikeOrderByAverageRatingDesc(nameKeyword, addressKeyword, categoryNameKeyword, pageable);
      }    
 
+     // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+     public Page<Store> findStoresByNameLikeOrAddressLikeOrCategoryNameLikeOrderByReservationCountDesc(String nameKeyword, String addressKeyword, String categoryNameKeyword, Pageable pageable) {
+         return storeRepository.findByNameLikeOrAddressLikeOrCategoryNameLikeOrderByReservationCountDesc(nameKeyword, addressKeyword, categoryNameKeyword, pageable);
+     }
+     
     // 指定されたidのカテゴリが設定された店舗を作成日時が新しい順に並べ替え、ページングされた状態で取得する
     public Page<Store> findStoresByCategoryIdOrderByCreatedAtDesc(Integer categoryId, Pageable pageable) {
         return storeRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId, pageable);
@@ -205,6 +209,11 @@ public class StoreService {
          return storeRepository.findByCategoryIdOrderByAverageRatingDesc(categoryId, pageable);
      }    
 
+     // 指定されたidのカテゴリが設定された店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+     public Page<Store> findStoresByCategoryIdOrderByReservationCountDesc(Integer categoryId, Pageable pageable) {
+         return storeRepository.findByCategoryIdOrderByReservationCountDesc(categoryId, pageable);
+     }
+     
     // 指定された最低価格以下の店舗を作成日時が新しい順に並べ替え、ページングされた状態で取得する
     public Page<Store> findStoresByPriceMinLessThanEqualOrderByCreatedAtDesc(Integer price, Pageable pageable) {
         return storeRepository.findByPriceMinLessThanEqualOrderByCreatedAtDesc(price, pageable);
@@ -220,12 +229,11 @@ public class StoreService {
          return storeRepository.findByPriceMinLessThanEqualOrderByAverageRatingDesc(price, pageable);
      }
     
-    
-    
-    
-    
-    
-    
+  // 指定された最低価格以下の店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+     public Page<Store> findStoresByPriceMinLessThanEqualOrderByReservationCountDesc(Integer price, Pageable pageable) {
+         return storeRepository.findByPriceMinLessThanEqualOrderByReservationCountDesc(price, pageable);
+     }   
+     
     
     
     

@@ -19,10 +19,11 @@ public class WebSecurityConfig {
      public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
              .authorizeHttpRequests((requests) -> requests                
-                 .requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**","/stores", "/stores/{id}", "/stripe/webhook").permitAll()  // すべてのユーザーにアクセスを許可するURL           
-//                 .requestMatchers("/stores/{storeId}/review/**").hasAnyRole("FREE_MEMBER", "PAID_MEMBER") // 無料会員と有料会員にアクセスを許可するURL
-//                 .requestMatchers("/subscription/register", "/subscription/create").hasRole("FREE_MEMBER")  // 無料会員にのみアクセスを許可するURL
-//                 .requestMatchers("/subscription/edit", "/subscription/update", "/subscription/cancel", "/subscription/delete").hasRole("PAID_MEMBER")  // 有料会員にのみアクセスを許可するURL
+                 .requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**","/stores", "/stores/{id}", "/stripe/webhook", "/user/resetpassword", "/user/newpassword").permitAll()  // すべてのユーザーにアクセスを許可するURL           
+                 .requestMatchers("/stores/{storeId}/review/**", "/reservations/**", "/stores/{storeId}/reservations/**", "/favorites/**", "/stores/{storeId}/favorites/**").hasAnyRole("FREE_MEMBER", "PAID_MEMBER") // 無料会員と有料会員にアクセスを許可するURL
+                 .requestMatchers("/stores/**", "/company", "/terms").hasAnyRole("ANONYMOUS", "FREE_MEMBER", "PAID_MEMBER")  // 未ログインのユーザー、無料会員、有料会員にアクセスを許可するURL
+                 .requestMatchers("/subscription/register", "/subscription/create").hasRole("FREE_MEMBER")  // 無料会員にのみアクセスを許可するURL
+                 .requestMatchers("/subscription/edit", "/subscription/update", "/subscription/cancel", "/subscription/delete").hasRole("PAID_MEMBER")  // 有料会員にのみアクセスを許可するURL
                  .requestMatchers("/admin/**").hasRole("ADMIN")  // 管理者にのみアクセスを許可するURL
                  .anyRequest().authenticated()                   // 上記以外のURLはログインが必要（会員または管理者のどちらでもOK）
              )

@@ -63,7 +63,6 @@ public class SubscriptionController {
         }
 
         String stripeCustomerId = user.getStripeCustomerId();
-        System.out.println("Using Stripe Customer ID: " + stripeCustomerId);
         try {
             // フォームから送信された支払い方法（StripeのPaymentMethodオブジェクト）を顧客に紐づける
             stripeService.attachPaymentMethodToCustomer(paymentMethodId, stripeCustomerId);

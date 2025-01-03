@@ -25,13 +25,34 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
      
      public List<Store> findTop10ByOrderByCreatedAtDesc();
      
-  // すべての店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
+     // すべての店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
      @Query("SELECT s FROM Store s " +
             "LEFT JOIN s.reviews rev " +
             "GROUP BY s.id " +
             "ORDER BY AVG(rev.rating) DESC")
      public Page<Store> findAllByOrderByAverageRatingDesc(Pageable pageable);    
 
+     // すべての店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+     @Query("SELECT s FROM Store s " +
+            "LEFT JOIN s.reservations res " +
+            "GROUP BY s.id " +
+            "ORDER BY COUNT(res) DESC")
+     public Page<Store> findAllByOrderByReservationCountDesc(Pageable pageable);
+     
+     // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+     @Query("SELECT s FROM Store s " +
+            "LEFT JOIN s.categoriesStores cs " +
+            "LEFT JOIN s.reservations res " +
+            "WHERE s.name LIKE %:name% " +
+            "OR s.address LIKE %:address% " +
+            "OR cs.category.name LIKE %:categoryName% " +
+            "GROUP BY s.id " +
+            "ORDER BY COUNT(DISTINCT res.id) DESC")
+     public Page<Store> findByNameLikeOrAddressLikeOrCategoryNameLikeOrderByReservationCountDesc(@Param("name") String nameKeyword,
+                                                                                                      @Param("address") String addressKeyword,
+                                                                                                      @Param("categoryName") String categoryNameKeyword,
+                                                                                                      Pageable pageable);
+     
     // 指定されたキーワードを店舗名または住所またはカテゴリ名に含む店舗を作成日時が新しい順に並べ替え、ページングされた状態で取得する
     @Query("SELECT DISTINCT s FROM Store s " +
            "LEFT JOIN s.categoriesStores cs " +
@@ -81,23 +102,41 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
            "ORDER BY s.priceMin ASC")
     public Page<Store> findByCategoryIdOrderByPriceMinAsc(@Param("categoryId") Integer categoryId, Pageable pageable);
     
-     // 指定されたidのカテゴリが設定された店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
-     @Query("SELECT s FROM Store s " +
-            "INNER JOIN s.categoriesStores cs " +
-            "LEFT JOIN s.reviews rev " +
-            "WHERE cs.category.id = :categoryId " +
-            "GROUP BY s.id " +
-            "ORDER BY AVG(rev.rating) DESC")
-     public Page<Store> findByCategoryIdOrderByAverageRatingDesc(@Param("categoryId") Integer categoryId, Pageable pageable);    
+ // 指定されたidのカテゴリが設定された店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+    @Query("SELECT s FROM Store s " +
+           "INNER JOIN s.categoriesStores cs " +
+           "LEFT JOIN s.reservations res " +
+           "WHERE cs.category.id = :categoryId " +
+           "GROUP BY s.id " +
+           "ORDER BY COUNT(res) DESC")
+    public Page<Store> findByCategoryIdOrderByReservationCountDesc(@Param("categoryId") Integer categoryId, Pageable pageable);
+    
+    // 指定されたidのカテゴリが設定された店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
+    @Query("SELECT s FROM Store s " +
+           "INNER JOIN s.categoriesStores cs " +
+           "LEFT JOIN s.reviews rev " +
+           "WHERE cs.category.id = :categoryId " +
+           "GROUP BY s.id " +
+           "ORDER BY AVG(rev.rating) DESC")
+    public Page<Store> findByCategoryIdOrderByAverageRatingDesc(@Param("categoryId") Integer categoryId, Pageable pageable);    
 
     public Page<Store> findByPriceMinLessThanEqualOrderByCreatedAtDesc(Integer price, Pageable pageable);
     public Page<Store> findByPriceMinLessThanEqualOrderByPriceMinAsc(Integer price, Pageable pageable);
     
-     // 指定された最低価格以下の店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
-     @Query("SELECT s FROM Store s " +
-            "LEFT JOIN s.reviews rev " +
-            "WHERE s.priceMin <= :price " +
-            "GROUP BY s.id " +
-            "ORDER BY AVG(rev.rating) DESC")
-     public Page<Store> findByPriceMinLessThanEqualOrderByAverageRatingDesc(@Param("price") Integer price, Pageable pageable);    
+    // 指定された最低価格以下の店舗を平均評価が高い順に並べ替え、ページングされた状態で取得する
+    @Query("SELECT s FROM Store s " +
+           "LEFT JOIN s.reviews rev " +
+           "WHERE s.priceMin <= :price " +
+           "GROUP BY s.id " +
+           "ORDER BY AVG(rev.rating) DESC")
+    public Page<Store> findByPriceMinLessThanEqualOrderByAverageRatingDesc(@Param("price") Integer price, Pageable pageable);   
+    
+ // 指定された最低価格以下の店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
+    @Query("SELECT s FROM Store s " +
+           "LEFT JOIN s.reservations res " +
+           "WHERE s.priceMin <= :price " +
+           "GROUP BY s.id " +
+           "ORDER BY COUNT(res) DESC")
+    public Page<Store> findByPriceMinLessThanEqualOrderByReservationCountDesc(@Param("price") Integer price, Pageable pageable);
+    
 }

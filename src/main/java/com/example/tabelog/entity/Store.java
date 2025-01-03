@@ -1,7 +1,8 @@
+
 package com.example.tabelog.entity;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -21,7 +22,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "stores")
 @Data
-@ToString(exclude = {"categoriesStores", "reviews"})
+@ToString(exclude = {"categoriesStores", "reviews", "reservations", "favorites"})
 public class Store {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +48,10 @@ public class Store {
 	private Integer capacity;
 	
 	@Column(name = "opening_time")
-	private LocalDateTime openingTime;
+	private LocalTime openingTime;
 	
 	@Column(name = "closing_time")
-	private LocalDateTime closingTime;
+	private LocalTime closingTime;
 	
 	@Column(name = "postal_code")
 	private String postalCode;
@@ -76,6 +77,12 @@ public class Store {
 	
 	@OneToMany(mappedBy = "store", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Review> reviews;
+	
+	@OneToMany(mappedBy = "store", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Reservation> reservations;
+	
+	@OneToMany(mappedBy = "store", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Favorite> favorites;
 	
 	// 平均評価を取得する
     @Transient

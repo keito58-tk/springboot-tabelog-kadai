@@ -2,6 +2,7 @@ package com.example.tabelog.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,8 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.tabelog.entity.ResetToken;
 import com.example.tabelog.entity.Role;
 import com.example.tabelog.entity.User;
+import com.example.tabelog.event.PasswordResetPublisher;
 import com.example.tabelog.form.SignupForm;
 import com.example.tabelog.form.UserEditForm;
 import com.example.tabelog.repository.RoleRepository;
@@ -26,18 +29,27 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final StripeService stripeService;
+    private final ResetTokenService resetTokenService;
+    private final PasswordResetPublisher passwordResetPublisher;
     
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, StripeService stripeService) {
+    public UserService(UserRepository userRepository,
+    				   RoleRepository roleRepository, 
+    				   PasswordEncoder passwordEncoder, 
+    				   StripeService stripeService, 
+    				   ResetTokenService resetTokenService, 
+    				   PasswordResetPublisher passwordResetPublisher) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;        
         this.passwordEncoder = passwordEncoder;
 		this.stripeService = stripeService;
+		this.resetTokenService = resetTokenService;
+		this.passwordResetPublisher = passwordResetPublisher;
     }    
     
     @Transactional
     public User create(SignupForm signupForm) {
         User user = new User();
-        Role role = roleRepository.findByName("ROLE_GENERAL");
+        Role role = roleRepository.findByName("ROLE_FREE_MEMBER");
         
         user.setName(signupForm.getName());
         user.setFurigana(signupForm.getFurigana());
@@ -118,8 +130,9 @@ public class UserService {
 	    return userRepository.findByEmail(email);
 	}
 
-	public User findById(User userId) {
-		return userRepository.findById(userId).orElse(null);
+	public User findById(Integer id) {
+	    return userRepository.findById(id)
+	                         .orElseThrow(() -> new IllegalArgumentException("ユーザーが見つかりません。"));
 	}
 
 	public User findByEmail(String email) {
@@ -144,5 +157,60 @@ public class UserService {
         userRepository.save(user);
     }
 
+	// パスワードリセットリクエストを処理する
+	public void requestPasswordReset(User user, String requestUrl) {
+		passwordResetPublisher.publishPasswordResetEvent(user, requestUrl);
+	}
+	
+	// パスワードリセットを実行する
+	@Transactional
+	public boolean resetPassword(String token, String newPassword) {
+		// トークンに対応するリセットトークンエンティティを検索
+		Optional<ResetToken> optionalToken = resetTokenService.findByToken(token);
+		
+		// リセットトークンが存在するかどうかを確認
+		if (optionalToken.isPresent()) {
+			ResetToken resetToken = optionalToken.get();
+			
+			// リセットトークンが有効期限内かどうかを確認
+			if (!resetTokenService.isTokenExpired(resetToken)) {
+				User user = resetToken.getUser();
+				
+				user.setPassword(passwordEncoder.encode(newPassword));
+				userRepository.save(user);
+				
+				// 使用済みのリセットトークンを削除
+				resetTokenService.deleteToken(resetToken);
+				
+				
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	// ユーザー取得
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
+	
+	// リセットトークンを使用してユーザーを取得する
+	public Optional<User> getUserByResetToken(String token) {
+		Optional<ResetToken> optionalResetToken = resetTokenService.findByToken(token);
+		return optionalResetToken.map(ResetToken :: getUser);
+	}
+	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

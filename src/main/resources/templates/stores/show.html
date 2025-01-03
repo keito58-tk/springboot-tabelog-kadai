@@ -124,11 +124,11 @@
                                          </div> 
 										 
 										 <div class="row pb-2 mb-2 border-bottom">
-                                             <div class="col-2">
+                                             <div class="col-4">
                                                  <span class="fw-bold">カテゴリ</span>
                                              </div>
  
-                                             <div class="col d-flex">
+                                             <div class="col">
                                                  <div th:unless="${store.categoriesStores.isEmpty()}">
                                                      <span th:each="categoryStore, stat : ${store.categoriesStores}" th:if="${stat.first}" th:text="${categoryStore.category.name}"></span><span th:each="categoryStore, stat : ${store.categoriesStores}" th:unless="${stat.first}" th:text="${'、' + categoryStore.category.name}"></span>
                                                  </div>
@@ -139,38 +139,20 @@
                                          </div>                               
                                      </div>
                                      
-                                     <div sec:authorize="isAnonymous()" class="col-lg-4 px-0 ps-lg-4 mb-4">                  
-                                         <div class="card">
-                                             <div class="card-body">                                                                                                                                                                                                                     
-                                                 <p class="card-text">予約するには<a th:href="@{/login}">ログイン</a>が必要です。</p>                                                                                                                                            
-                                                 <button type="submit" class="btn text-white shadow-sm w-100 tabelog-btn" disabled>予約する</button>                                                                                                                
-                                             </div>
-                                         </div> 
-									</div>
-										  
-									 <div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">                  
-                                          <div class="card">
-                                              <div class="card-body"> 
-                                                  <form method="get" th:action="@{/stores/__${store.getId()}__/reservations/input}" th:object="${reservationInputForm}">                                                                                                                                                                       
-                                                      <div class="form-group mb-2">                                            
-                                                          <label for="reservationDate" class="col-form-label text-md-left fw-bold">予約日</label>    
-                                                          <div th:if="${#fields.hasErrors('reservationDate')}" class="text-danger small mb-2" th:errors="*{reservationDate}"></div>                                          
-                                                          <input type="text" class="form-control" th:field="*{reservationDate}">                                                                     
-                                                      </div>
-                                                      
-                                                      <div class="form-group mb-4">                                            
-                                                          <label for="numberOfPeople" class="col-form-label text-md-left fw-bold">予約人数</label>  
-                                                          <div th:if="${#fields.hasErrors('numberOfPeople')}" class="text-danger small mb-2" th:errors="*{numberOfPeople}"></div>                                            
-                                                          <input type="number" class="form-control" th:field="*{numberOfPeople}" min="1">                                                                     
-                                                      </div>
-                                                                                                          
-                                                      <div class="form-group">
-                                                          <button type="submit" class="btn text-white shadow-sm w-100 tabelog-btn">予約する</button>
-                                                      </div>
-                                                  </form>                                                                     
-                                              </div>
-                                          </div>  
-                                      </div> 
+									 <th:block sec:authorize="isAnonymous()">
+	                                     <div class="text-center">
+	                                         <a th:href="@{/login}" class="btn text-white shadow-sm w-50 tabelog-btn">♥ お気に入り追加</a>
+	                                     </div>
+	                                 </th:block>
+	                                 <th:block sec:authorize="isAuthenticated()">
+	                                     <form th:unless="${isFavorite}" method="post" th:action="@{/stores/__${store.id}__/favorites/create}" class="text-center">
+	                                         <button type="submit" class="btn text-white shadow-sm w-50 tabelog-btn">♥ お気に入り追加</button>
+	                                     </form>
+	                                     <form th:if="${isFavorite}" method="post" th:action="@{/favorites/__${favorite.id}__/delete}" class="text-center">
+	                                         <button type="submit" class="btn btn-outline-primary shadow-sm w-50 tabelog-remove-favorite-button">♥ お気に入り解除</button>
+	                                     </form>
+	                                 </th:block>
+									 
 
                                  </div>                                                                                             
                              </div>

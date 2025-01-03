@@ -5,6 +5,6 @@ let maxDate = new Date();
    mode: "range",
    locale: 'ja',
    minDate: 'today',
-   maxDate: maxDate,
+   maxDate: new Date().fp_incr(60),
 
  });

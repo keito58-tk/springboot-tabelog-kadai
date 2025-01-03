@@ -61,10 +61,9 @@ INSERT IGNORE INTO stores (id, name, image_name, description, price_min, price_m
 VALUES (30, 'カフェ＆ダイニング 風のささやき', 'store30.jpg', '自然豊かなカフェとダイニングです。', 6000, 11000, 20, '08:00:00', '17:00:00', '910-0823', '福井県福井市北四ツ居X-XX-XX', '012-345-698', '木曜日');
 
 -- rolesテーブル
-INSERT IGNORE INTO roles (id, name) VALUES (1, 'ROLE_GENERAL');
+INSERT IGNORE INTO roles (id, name) VALUES (1, 'ROLE_FREE_MEMBER');
 INSERT IGNORE INTO roles (id, name) VALUES (2, 'ROLE_ADMIN');
-INSERT IGNORE INTO roles (id, name) VALUES (3, 'ROLE_FREE_MEMBER');
-INSERT IGNORE INTO roles (id, name) VALUES (4, 'ROLE_PAID_MEMBER');
+INSERT IGNORE INTO roles (id, name) VALUES (3, 'ROLE_PAID_MEMBER');
 
 
 -- usersテーブル
@@ -81,18 +80,18 @@ INSERT IGNORE INTO users (id, name, furigana, postal_code, address, phone_number
 INSERT IGNORE INTO users (id, name, furigana, postal_code, address, phone_number, email, password, role_id, enabled, stripe_customer_id) VALUES (11, '侍 秋美', 'サムライ アキミ', '606-8235', '京都府京都市左京区田中西春菜町X-XX-XX', '090-1234-5678', 'akimi.samurai@example.com', 'password', 1, false, 'cus_klmn1234567890kl');
 INSERT IGNORE INTO users (id, name, furigana, postal_code, address, phone_number, email, password, role_id, enabled, stripe_customer_id) VALUES (12, '侍 信平', 'サムライ シンペイ', '673-1324', '兵庫県加東市新定X-XX-XX', '090-1234-5678', 'shinpei.samurai@example.com', 'password', 1, false, 'cus_lmno2345678901lm');
 
--- reservationsテーブル
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (1, 1, 1, 2, '2024-08-01');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (2, 2, 1, 3, '2024-08-03');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (3, 3, 1, 4, '2024-08-05');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (4, 4, 1, 5, '2024-08-07');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (5, 5, 1, 6, '2024-08-08');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (6, 6, 1, 2, '2024-08-10');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (7, 7, 1, 3, '2024-08-12');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (8, 8, 1, 4, '2024-08-13');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (9, 9, 1, 5, '2024-08-15');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (10, 10, 1, 6, '2024-08-17');
-INSERT IGNORE INTO reservations (id, store_id, user_id, number_of_people, reservation_date) VALUES (11, 11, 1, 2, '2024-08-18');
+/* reservationsテーブル */
+INSERT IGNORE INTO reservations (id, reserved_datetime, number_of_people, store_id, user_id) VALUES
+(1, '2024-01-01 18:00:00', 10, 1, 2),
+(2, '2024-02-01 18:00:00', 10, 2, 2),
+(3, '2024-03-01 18:00:00', 10, 3, 2),
+(4, '2024-04-01 18:00:00', 10, 4, 2),
+(5, '2024-05-01 18:00:00', 10, 5, 2),
+(6, '2024-06-01 18:00:00', 10, 6, 2),
+(7, '2024-07-01 18:00:00', 10, 7, 2),
+(8, '2024-08-01 18:00:00', 10, 8, 2),
+(9, '2024-09-01 18:00:00', 10, 9, 2),
+(10, '2024-10-01 18:00:00', 10, 10, 2);
 
 
 -- reviewsテーブル
@@ -157,4 +156,40 @@ INSERT IGNORE INTO category_store (id, store_id, category_id) VALUES
 (17,14,2),
 (18,15,26),
 (19,15,33);
+
+-- favoritesテーブル --
+INSERT IGNORE INTO favorites (id, store_id, user_id) VALUES
+(1, 5, 2),
+(2, 10, 2),
+(3, 15, 2),
+(4, 20, 2),
+(5, 25, 2),
+(6, 30, 2),
+(7, 35, 2),
+(8, 40, 2),
+(9, 44, 2),
+(10, 50, 2);
+
+-- companysテーブル --
+INSERT IGNORE INTO companys (name, postal_code, address, representative, establishment_date, capital, business, number_of_employees)
+VALUES
+('サンプル株式会社', '1234567', '東京都千代田区丸の内1-1-1', '山田 太郎', '2000-01-01', '1000万円', 'ソフトウェア開発、ITコンサルティング', 50),
+('テックコーポレーション', '9876543', '大阪府大阪市北区梅田1-1-1', '佐藤 花子', '2010-05-15', '5000万円', 'クラウドサービス、データ解析', 100),
+('グローバル株式会社', '5432109', '福岡県福岡市中央区天神2-2-2', '田中 一郎', '1995-09-30', '2億円', '貿易、物流管理', 300);
+
+-- termsテーブル --
+INSERT IGNORE INTO terms (content) VALUES
+('利用規約   ここに利用規約の内容を記載します。');
+
+-- reset_tokens テーブル --
+INSERT IGNORE INTO reset_tokens (user_id, token, expiry_date) VALUES
+(1, 'tokenABC123', '2025-01-01 00:00:00'),
+(2, 'tokenDEF456', '2025-01-02 00:00:00');
+
+
+
+
+
+
+
 
