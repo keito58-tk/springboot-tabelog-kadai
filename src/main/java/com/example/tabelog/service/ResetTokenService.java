@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +63,6 @@ public class ResetTokenService {
 	}
 	
 	// ユーザーに紐づくリセットトークンを削除するメソッド
-	@Modifying
 	@Transactional
 	public void deleteByUser(User user) {
 		logger.debug("Deleting reset token for user ID: {}", user.getId());
