@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +14,6 @@ import com.example.tabelog.repository.ResetTokenRepository;
 @Service
 public class ResetTokenService {
 	private final ResetTokenRepository resetTokenRepository;
-	private static final Logger logger = LoggerFactory.getLogger(ResetTokenService.class);
 	
 	public ResetTokenService (ResetTokenRepository resetTokenRepository) {
 		this.resetTokenRepository = resetTokenRepository;
@@ -26,7 +23,6 @@ public class ResetTokenService {
 	@Transactional
 	public String createToken(User user) {
 		// 既存のトークンを削除
-		logger.debug("Creating reset token for user ID: {}", user.getId());
         resetTokenRepository.deleteByUser(user);
         
 		String token = UUID.randomUUID().toString();
@@ -36,7 +32,6 @@ public class ResetTokenService {
 		resetToken.setExpiryDate(LocalDateTime.now().plusHours(24)); // 24時間有効
 		
 		resetTokenRepository.save(resetToken);
-		logger.debug("Saved new reset token for user ID: {}", user.getId());
 		
 		return token;
 	}
@@ -56,18 +51,14 @@ public class ResetTokenService {
 	//トークンの削除
 	@Transactional
 	public void deleteToken(ResetToken token) {
-		logger.debug("Deleting reset token ID: {}", token.getId());
 		resetTokenRepository.delete(token);
 		resetTokenRepository.flush(); // 削除を即時反映
-		logger.debug("Deleted reset token ID: {}", token.getId());
 	}
 	
 	// ユーザーに紐づくリセットトークンを削除するメソッド
 	@Transactional
 	public void deleteByUser(User user) {
-		logger.debug("Deleting reset token for user ID: {}", user.getId());
 		resetTokenRepository.deleteByUser(user);
 		resetTokenRepository.flush();
-		logger.debug("Deleted reset token for user ID: {}", user.getId());
 	}
 }
