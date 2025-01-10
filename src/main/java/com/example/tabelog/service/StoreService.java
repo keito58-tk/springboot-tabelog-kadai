@@ -34,12 +34,14 @@ public class StoreService {
 		this.categoryStoreService = categoryStoreService;
 	}
 	
+	// 新しい店舗を作成し、データベースに保存
 	@Transactional
 	public void createStore(StoreRegisterForm storeRegisterForm) {
 		Store store = new Store();
 		MultipartFile imageFile = storeRegisterForm.getImageFile();
 		List<Integer> categoryIds = storeRegisterForm.getCategoryIds();
 		
+		// 画像ファイルが存在する場合、ファイル名をハッシュ化して保存
 		if (!imageFile.isEmpty()) {
 			String imageName = imageFile.getOriginalFilename();
 			String hashedImageName = generateNewFileName(imageName);
@@ -51,6 +53,7 @@ public class StoreService {
 		store.setName(storeRegisterForm.getName());
 		store.setDescription(storeRegisterForm.getDescription());
 		
+		// 営業時間をパースして設定
 		DateTimeFormatter fmt = new DateTimeFormatterBuilder()
 		        .append(DateTimeFormatter.ISO_LOCAL_TIME)
 		        .parseDefaulting(ChronoField.EPOCH_DAY, 0)
@@ -65,24 +68,29 @@ public class StoreService {
 		store.setPhoneNumber(storeRegisterForm.getPhoneNumber());
 		store.setPriceMax(storeRegisterForm.getPriceMax());
 		store.setPriceMin(storeRegisterForm.getPriceMin());
+		store.setCapacity(storeRegisterForm.getCapacity());
 		
+		// 店舗をデータベースに保存
 		storeRepository.save(store);
 
+		// カテゴリと店舗の関連付けを作成
 		if (categoryIds != null) {
             categoryStoreService.createCategoriesStores(categoryIds, store);
         }
 	}
 	
+	// 店舗情報を更新し、データベースに保存
 	@Transactional
 	public void update(StoreEditForm storeEditForm) {
 		Store store = storeRepository.getReferenceById(storeEditForm.getId());
 		MultipartFile imageFile = storeEditForm.getImageFile();
 		List<Integer> categoryIds = storeEditForm.getCategoryIds();
 		
+		// 画像ファイルが存在する場合、ファイル名をハッシュ化して保存
 		if (!imageFile.isEmpty()) {
 			String imageName = imageFile.getOriginalFilename();
 			String hashedImageName = generateNewFileName(imageName);
-			Path filePath = Paths.get("src/main/resourses/static/storage/" + hashedImageName);
+			Path filePath = Paths.get("src/main/resources/static/storage/" + hashedImageName);
 			copyImageFile(imageFile, filePath);
 			store.setImageName(hashedImageName);
 		}
@@ -90,6 +98,7 @@ public class StoreService {
 		store.setName(storeEditForm.getName());
 		store.setDescription(storeEditForm.getDescription());
 		
+		// 営業時間をパースして更新
 		DateTimeFormatter fmt = new DateTimeFormatterBuilder()
 		        .append(DateTimeFormatter.ISO_LOCAL_TIME)
 		        .parseDefaulting(ChronoField.EPOCH_DAY, 0)
@@ -105,11 +114,14 @@ public class StoreService {
 		store.setPriceMax(storeEditForm.getPriceMax());
 		store.setPriceMin(storeEditForm.getPriceMin());
 		
+		// 更新された店舗情報をデータベースに保存
 		storeRepository.save(store);
 		
+		// カテゴリと店舗の関連付けを同期
 		categoryStoreService.syncCategoriesStores(categoryIds, store);
 	}
 
+	// ファイル名を生成
 	private String generateNewFileName(String fileName) {
 		String[] fileNames = fileName.split("\\.");
 		for (int i = 0; i < fileNames.length - 1; i++) {
@@ -120,6 +132,7 @@ public class StoreService {
 		return hashedFileName;
 	}
 	
+	// 画像ファイルを指定されたパスにコピー
 	private void copyImageFile(MultipartFile imageFile, Path filePath) {
 		try {
 			Files.copy(imageFile.getInputStream(), filePath);
@@ -129,6 +142,7 @@ public class StoreService {
 		
 	}
 
+	// 指定されたIDの店舗を取得
 	public Optional<Store> findStoreById(Integer storeId) {
 	    return storeRepository.findById(storeId);
 	}
@@ -199,6 +213,11 @@ public class StoreService {
         return storeRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId, pageable);
     }
 
+    // 指定されたidのカテゴリが設定された店舗を最高価格が安い順に並べ替え、ページングされた状態で取得する
+    public Page<Store> findStoresByCategoryIdOrderByPriceMaxAsc(Integer categoryId, Pageable pageable) {
+    	return storeRepository.findByCategoryIdOrderByPriceMaxAsc(categoryId, pageable);
+    }
+    
     // 指定されたidのカテゴリが設定された店舗を最低価格が安い順に並べ替え、ページングされた状態で取得する
     public Page<Store> findStoresByCategoryIdOrderByPriceMinAsc(Integer categoryId, Pageable pageable) {
         return storeRepository.findByCategoryIdOrderByPriceMinAsc(categoryId, pageable);
@@ -233,15 +252,6 @@ public class StoreService {
      public Page<Store> findStoresByPriceMinLessThanEqualOrderByReservationCountDesc(Integer price, Pageable pageable) {
          return storeRepository.findByPriceMinLessThanEqualOrderByReservationCountDesc(price, pageable);
      }   
-     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
 }

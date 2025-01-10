@@ -40,16 +40,20 @@ public class FavoriteService {
         return favoriteRepository.count();
     }
 
+    // 新しいお気に入りを作成し、データベースに保存
     @Transactional
     public void createFavorite(Store store, User user) {
         Favorite favorite = new Favorite();
 
+        // 店舗とユーザーを設定
         favorite.setStore(store);
         favorite.setUser(user);
 
+        // 新しいお気に入りをデータベースに保存
         favoriteRepository.save(favorite);
     }
 
+    // 指定されたお気に入りをデータベースから削除
     @Transactional
     public void deleteFavorite(Favorite favorite) {
         favoriteRepository.delete(favorite);

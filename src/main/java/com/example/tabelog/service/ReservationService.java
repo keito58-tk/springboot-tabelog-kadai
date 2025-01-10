@@ -44,9 +44,12 @@ public class ReservationService {
         return reservationRepository.findFirstByOrderByIdDesc();
     }
 
+    // 新しい予約を作成し、データベースに保存
     @Transactional
     public void createReservation(ReservationRegisterForm reservationRegisterForm, Store store, User user) {
         Reservation reservation = new Reservation();
+        
+        // 予約日時を設定（フォームから取得した日付と時間を結合）
         LocalDateTime reservedDatetime = LocalDateTime.of(reservationRegisterForm.getReservationDate(), reservationRegisterForm.getReservationTime());
 
         reservation.setReservedDatetime(reservedDatetime);
@@ -54,9 +57,11 @@ public class ReservationService {
         reservation.setStore(store);
         reservation.setUser(user);
 
+        // 新しい予約をデータベースに保存
         reservationRepository.save(reservation);
     }
 
+    // 指定された予約をデータベースから削除
     @Transactional
     public void deleteReservation(Reservation reservation) {
         reservationRepository.delete(reservation);

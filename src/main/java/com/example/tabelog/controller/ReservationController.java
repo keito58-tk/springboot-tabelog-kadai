@@ -45,12 +45,14 @@ public class ReservationController {
     {
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
             return "redirect:/subscription/register";
         }
 
+        // ユーザーの予約を取得（予約日時の降順）
         Page<Reservation> reservationPage = reservationService.findReservationsByUserOrderByReservedDatetimeDesc(user, pageable);
 
         model.addAttribute("reservationPage", reservationPage);
@@ -67,6 +69,7 @@ public class ReservationController {
     {
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
@@ -75,6 +78,7 @@ public class ReservationController {
 
         Optional<Store> optionalStore  = storeService.findStoreById(storeId);
 
+        // 店舗が存在しない場合、エラーメッセージを表示して店舗一覧にリダイレクト
         if (optionalStore.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
 
@@ -99,11 +103,13 @@ public class ReservationController {
     {
     	
     	Optional<Store> optionalStore = storeService.findStoreById(storeId);
+    	
         if (optionalStore.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
             return "redirect:/stores";
         }
 
+        // 予約日のバリデーション：予約日は今日以降である必要がある
         LocalDate reservationDate = reservationRegisterForm.getReservationDate();
         if (reservationDate != null && reservationDate.isBefore(LocalDate.now())) {
             bindingResult.rejectValue("reservationDate", "error.reservationDate", "予約日は今日以降の日付を選択してください。");
@@ -116,6 +122,8 @@ public class ReservationController {
 
         Store store = optionalStore.get();
         User user = userDetailsImpl.getUser();
+        
+        // 新しい予約を作成
         reservationService.createReservation(reservationRegisterForm, store, user);
 
         redirectAttributes.addFlashAttribute("successMessage", "予約が完了しました。");
@@ -129,6 +137,7 @@ public class ReservationController {
     	{
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
@@ -145,12 +154,14 @@ public class ReservationController {
 
         Reservation reservation = optionalReservation.get();
 
+        // 予約が現在のユーザーのものでない場合、不正なアクセスとみなしエラーメッセージを表示
         if (!reservation.getUser().getId().equals(user.getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "不正なアクセスです。");
 
             return "redirect:/reservations";
         }
 
+        // 予約を削除
         reservationService.deleteReservation(reservation);
         redirectAttributes.addFlashAttribute("successMessage", "予約をキャンセルしました。");
 

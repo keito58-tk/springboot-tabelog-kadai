@@ -42,6 +42,7 @@ public class ReviewService {
         return reviewRepository.findFirstByOrderByIdDesc();
     }
 
+    // 新しいレビューを作成し、データベースに保存
     @Transactional
     public void createReview(ReviewRegisterForm reviewRegisterForm, Store store, User user) {
         Review review = new Review();
@@ -51,9 +52,11 @@ public class ReviewService {
         review.setStore(store);
         review.setUser(user);
 
+        // 新しいレビューをデータベースに保存
         reviewRepository.save(review);
     }
 
+    // 指定されたレビューを更新し、データベースに保存
     @Transactional
     public void updateReview(ReviewEditForm reviewEditForm, Review review) {
         review.setRating(reviewEditForm.getRating());
@@ -62,6 +65,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    // 指定されたレビューをデータベースから削除
     @Transactional
     public void deleteReview(Review review) {
         reviewRepository.delete(review);

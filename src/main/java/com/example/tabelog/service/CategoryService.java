@@ -51,6 +51,8 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    
+    // 新しいカテゴリを作成
     @Transactional
     public void createCategory(CategoryRegisterForm categoryRegisterForm) {
         Category category = new Category();
@@ -60,6 +62,8 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    
+    // カテゴリを更新
     @Transactional
     public void updateCategory(CategoryEditForm categoryEditForm, Category category) {
         category.setName(categoryEditForm.getName());
@@ -67,6 +71,8 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    
+    // カテゴリを削除
     @Transactional
     public void deleteCategory(Category category) {
         categoryRepository.delete(category);

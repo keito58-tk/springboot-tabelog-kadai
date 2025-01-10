@@ -61,12 +61,17 @@ public class ReviewController {
         String userRoleName = user.getRole().getName();
         Page<Review> reviewPage;
 
+        
+        // ユーザーの役割に応じて表示するレビューの数を調整
         if (userRoleName.equals("ROLE_PAID_MEMBER")) {
+        	// 有料プランユーザーは全てのレビューを表示
             reviewPage = reviewService.findReviewsByStoreOrderByCreatedAtDesc(store, pageable);
         } else {
+        	// 無料プランユーザーは最新3件のみ表示
             reviewPage = reviewService.findReviewsByStoreOrderByCreatedAtDesc(store, PageRequest.of(0, 3));
         }
 
+        // ユーザーが既にレビューを投稿しているかどうかを確認
         boolean hasUserAlreadyReviewed = reviewService.hasUserAlreadyReviewed(store, user);
 
         model.addAttribute("store", store);
@@ -85,6 +90,7 @@ public class ReviewController {
     {
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
@@ -119,6 +125,7 @@ public class ReviewController {
     {
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
@@ -142,6 +149,7 @@ public class ReviewController {
             return "review/register";
         }
 
+        // 新しいレビューを作成
         reviewService.createReview(reviewRegisterForm, store, user);
         redirectAttributes.addFlashAttribute("successMessage", "レビューを投稿しました。");
 
@@ -174,6 +182,7 @@ public class ReviewController {
 
         Review review = optionalReview.get();
 
+        // レビューが指定された店舗に属しておらず、かつユーザー自身のレビューでない場合、不正なアクセスとみなしてエラーメッセージを表示
         if (!review.getStore().getId().equals(storeId) || !review.getUser().getId().equals(user.getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "不正なアクセスです。");
 
@@ -210,6 +219,7 @@ public class ReviewController {
         Optional<Store> optionalStore  = storeService.findStoreById(storeId);
         Optional<Review> optionalReview  = reviewService.findReviewById(reviewId);
 
+        // 店舗またはレビューが存在しない場合、エラーメッセージを表示して店舗一覧にリダイレクト
         if (optionalStore.isEmpty() || optionalReview.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "指定されたページが見つかりません。");
 
@@ -218,6 +228,7 @@ public class ReviewController {
 
         Review review = optionalReview.get();
 
+        // レビューが指定された店舗に属しておらず、かつユーザー自身のレビューでない場合、不正なアクセスとみなしてエラーメッセージを表示
         if (!review.getStore().getId().equals(storeId) || !review.getUser().getId().equals(user.getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "不正なアクセスです。");
 
@@ -234,6 +245,7 @@ public class ReviewController {
             return "review/edit";
         }
 
+        // レビューを更新
         reviewService.updateReview(reviewEditForm, review);
         redirectAttributes.addFlashAttribute("successMessage", "レビューを編集しました。");
 
@@ -271,6 +283,7 @@ public class ReviewController {
             return "redirect:/stores/{storeId}";
         }
 
+        // レビューを削除
         reviewService.deleteReview(review);
         redirectAttributes.addFlashAttribute("successMessage", "レビューを削除しました。");
 

@@ -25,7 +25,7 @@
 						
 						<h1 class="mb-4 text-center">店舗登録</h1>
 						
-						<form method="post" action="#" th:action="@{/admin/stores/create}" th:object="${storeRegisterForm}" enctype="multipart/form-data">
+						<form method="post" th:action="@{/admin/stores/create}" th:object="${storeRegisterForm}" enctype="multipart/form-data">
 							<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 							<div class="form-group row mb-3">
 								<div class="col-md-4">
@@ -38,7 +38,7 @@
 							</div>
 							<div class="form-group row mb-3">
 								<div class="col-md-4">
-									<label for="name" class="col-form-label text-md-left fw-bold">店舗画像</label>
+									<label for="imageFile" class="col-form-label text-md-left fw-bold">店舗画像</label>
 								</div>
 								<div class="col-md-8">
 									<div th:if="${#fields.hasErrors('imageFile')}" class="text-danger small mb-2" th:errors="*{imageFile}"></div>
@@ -68,7 +68,7 @@
 								</div>
 							</div>
 							<div class="form-group row mb-3">
-								<div class="col-md-4">
+								<div class="col-md-4">                                                                                                   
 									<label for="priceMax" class="col-form-label text-md-left fw-bold">価格帯 (上限)</label>
 								</div>
 								<div class="col-md-8">
@@ -96,6 +96,15 @@
 								</div>
 							</div>
 							
+							<div class="form-group row mb-3">
+							    <div class="col-md-4">
+							        <label for="capacity" class="col-form-label text-md-left fw-bold">座席数</label>
+							    </div>
+							    <div class="col-md-8">
+							        <div th:if="${#fields.hasErrors('capacity')}" class="text-danger small mb-2" th:errors="*{capacity}"></div>
+							        <input type="number" class="form-control" th:field="*{capacity}" min="1">
+							    </div>
+							</div>
 							
 							<div class="form-group row mb-3">
 								<div class="col-md-4">

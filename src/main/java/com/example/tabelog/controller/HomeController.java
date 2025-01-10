@@ -2,31 +2,27 @@ package com.example.tabelog.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.tabelog.entity.Store;
 import com.example.tabelog.repository.StoreRepository;
-import com.example.tabelog.service.StoreService;
 
 @Controller
 public class HomeController {
 	private final StoreRepository storeRepository;   
-	private final StoreService storeService;
     
-    public HomeController(StoreRepository storeRepository, StoreService storeService) {
+    public HomeController(StoreRepository storeRepository) {
         this.storeRepository = storeRepository;            
-        this.storeService = storeService;
     }
 	
 	@GetMapping("/")
 	public String index(Model model) {
+		// 最新の10店舗を取得（作成日時の降順）
 		List<Store> newStores = storeRepository.findTop10ByOrderByCreatedAtDesc();
-		Page<Store> highlyRatedStores = storeService.findAllStoresByOrderByAverageRatingDesc(PageRequest.of(0, 6));
 		
+		// モデルに新着店舗のリストを追加
         model.addAttribute("newStores", newStores); 
 		
 		return "index";

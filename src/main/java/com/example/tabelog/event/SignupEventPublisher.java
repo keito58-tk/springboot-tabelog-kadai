@@ -14,6 +14,7 @@ public class SignupEventPublisher {
     }
     
     public void publishSignupEvent(User user, String requestUrl) {
+    	// 新しいSignupEventを作成し、イベントを発行
         applicationEventPublisher.publishEvent(new SignupEvent(this, user, requestUrl));
     }
 }

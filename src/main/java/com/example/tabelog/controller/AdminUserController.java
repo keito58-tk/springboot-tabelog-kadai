@@ -27,6 +27,7 @@ public class AdminUserController {
     public String index(@RequestParam(name = "keyword", required = false) String keyword, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, Model model) {
         Page<User> userPage;
         
+        // キーワードが提供されている場合は名前またはフリガナで検索、それ以外は全ユーザーを取得
         if (keyword != null && !keyword.isEmpty()) {
             userPage = userRepository.findByNameLikeOrFuriganaLike("%" + keyword + "%", "%" + keyword + "%", pageable);                   
         } else {

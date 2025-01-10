@@ -19,6 +19,7 @@ public class CompanyController {
 
     @GetMapping
     public String index(Model model) {
+    	// 最も新しい（IDが降順の最初）会社情報を取得
         Company company = companyService.findFirstCompanyByOrderByIdDesc();
 
         model.addAttribute("company", company);

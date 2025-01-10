@@ -39,12 +39,14 @@ public class AdminCategoryController {
     {
         Page<Category> categoryPage;
 
+        // キーワードが提供されている場合は名前で検索、それ以外は全カテゴリを取得
         if (keyword != null && !keyword.isEmpty()) {
             categoryPage = categoryService.findCategoriesByNameLike(keyword, pageable);
         } else {
             categoryPage = categoryService.findAllCategories(pageable);
         }
 
+        // モデルに必要な属性を追加
         model.addAttribute("categoryPage", categoryPage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("categoryRegisterForm", new CategoryRegisterForm());
@@ -59,12 +61,15 @@ public class AdminCategoryController {
                          RedirectAttributes redirectAttributes,
                          Model model)
     {
+    	
+    	// バリデーションエラーが存在する場合
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "カテゴリ名を入力してください。");
 
             return "redirect:/admin/categories";
         }
 
+        // カテゴリを作成
         categoryService.createCategory(categoryRegisterForm);
         redirectAttributes.addFlashAttribute("successMessage", "カテゴリを登録しました。");
 
@@ -78,20 +83,25 @@ public class AdminCategoryController {
                          RedirectAttributes redirectAttributes,
                          Model model)
     {
+    	
+    	// 指定されたIDのカテゴリを取得
         Optional<Category> optionalCategory = categoryService.findCategoryById(id);
 
+    	// カテゴリが存在しない場合
         if (optionalCategory.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "カテゴリが存在しません。");
 
             return "redirect:/admin/categories";
         }
 
+        // バリデーションエラーが存在する場合
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "カテゴリ名を入力してください。");
 
             return "redirect:/admin/categories";
         }
 
+        // カテゴリを更新
         Category category = optionalCategory.get();
         categoryService.updateCategory(categoryEditForm, category);
         redirectAttributes.addFlashAttribute("successMessage", "カテゴリを編集しました。");
@@ -101,14 +111,17 @@ public class AdminCategoryController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+    	// 指定されたIDのカテゴリを取得
         Optional<Category> optionalCategory = categoryService.findCategoryById(id);
 
+        // カテゴリが存在しない場合
         if (optionalCategory.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "カテゴリが存在しません。");
 
             return "redirect:/admin/categories";
         }
 
+        // カテゴリを削除
         Category category = optionalCategory.get();
         categoryService.deleteCategory(category);
         redirectAttributes.addFlashAttribute("successMessage", "カテゴリを削除しました。");

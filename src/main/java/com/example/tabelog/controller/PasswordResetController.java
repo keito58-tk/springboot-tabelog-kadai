@@ -44,6 +44,7 @@ public class PasswordResetController {
     				.build()
     				.toUriString();
     		
+    		// パスワードリセットのリクエストをユーザーに送信
     		userService.requestPasswordReset(user, requestUrl);
     		
     		model.addAttribute("message", "パスワードリセット用のリンクをメールに送信しました。");
@@ -55,14 +56,18 @@ public class PasswordResetController {
     }
     
     // パスワードリセット画面
-    @GetMapping("/newpassword")
+    @GetMapping("/newpassword/verify")
     public String showResetPasswordForm(@RequestParam(name = "token") String token, Model model) {
+    	// トークンに対応するユーザーを取得
     	Optional<User> user = userService.getUserByResetToken(token);
+    	
     	if (user.isPresent()) {
+    		// トークンが有効な場合、トークンをモデルに追加してパスワードリセットフォームを表示
 			model.addAttribute("token", token);
 			
 			return "user/newpassword";
 		} else {
+			// トークンが無効な場合、エラーメッセージをモデルに追加してリセットフォームに戻る
 			model.addAttribute("error", "無効なトークンです。");
 			
 			return "user/resetpassword";
@@ -75,11 +80,14 @@ public class PasswordResetController {
     								   @RequestParam(name = "password") String password,
     								   Model model
     		) {
+    	// パスワードリセットの実行
     	boolean isReset = userService.resetPassword(token, password);
     	if (isReset) {
+    		// パスワードリセットが成功した場合、成功メッセージをモデルに追加してログイン画面にリダイレクト
     		model.addAttribute("message", "パスワードが正常にリセットされました。");
     		return "login";
 		} else {
+			// パスワードリセットが失敗した場合、エラーメッセージをモデルに追加してリセットフォームに戻る
 			model.addAttribute("message", "無効なトークンです。");
 			return "user/resetpassword";
 		}

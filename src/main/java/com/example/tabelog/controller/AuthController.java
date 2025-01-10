@@ -62,8 +62,11 @@ public class AuthController {
              return "auth/signup";
          }
          
+         // 新しいユーザーを作成
          User createdUser = userService.create(signupForm);
+         // リクエストのURLを取得
          String requestUrl = new String(httpServletRequest.getRequestURL());
+         // サインアップイベントを発行（認証メールの送信などをトリガー）
          signupEventPublisher.publishSignupEvent(createdUser, requestUrl);
          redirectAttributes.addFlashAttribute("successMessage", "ご入力いただいたメールアドレスに認証メールを送信しました。メールに記載されているリンクをクリックし、会員登録を完了してください。");        
         
@@ -73,14 +76,17 @@ public class AuthController {
 	 
 	 @GetMapping("/signup/verify")
      public String verify(@RequestParam(name = "token") String token, Model model) {
+		 // トークンを取得
          VerificationToken verificationToken = verificationTokenService.getVerificationToken(token);
          
          if (verificationToken != null) {
+        	 // トークンが有効な場合、ユーザーを有効化
              User user = verificationToken.getUser();  
              userService.enableUser(user);
              String successMessage = "会員登録が完了しました。";
              model.addAttribute("successMessage", successMessage);            
          } else {
+        	 // トークンが無効な場合、エラーメッセージを表示
              String errorMessage = "トークンが無効です。";
              model.addAttribute("errorMessage", errorMessage);
          }

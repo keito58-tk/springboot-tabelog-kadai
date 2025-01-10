@@ -28,5 +28,15 @@
     "name": "stripe.premium-plan-price-id",
     "type": "java.lang.String",
     "description": "A description for 'stripe.premium-plan-price-id'"
+  },
+  {
+    "name": "stripe.success-url",
+    "type": "java.lang.String",
+    "description": "A description for 'stripe.success-url'"
+  },
+  {
+    "name": "stripe.cancel-url",
+    "type": "java.lang.String",
+    "description": "A description for 'stripe.cancel-url'"
   }
 ]}

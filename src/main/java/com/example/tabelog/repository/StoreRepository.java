@@ -102,6 +102,13 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
            "ORDER BY s.priceMin ASC")
     public Page<Store> findByCategoryIdOrderByPriceMinAsc(@Param("categoryId") Integer categoryId, Pageable pageable);
     
+    @Query("SELECT s FROM Store s " +
+	       "INNER JOIN s.categoriesStores cs " +
+	       "WHERE cs.category.id = :categoryId " +
+	       "ORDER BY s.priceMax ASC")
+	public Page<Store> findByCategoryIdOrderByPriceMaxAsc(@Param("categoryId") Integer categoryId, Pageable pageable);
+
+    
  // 指定されたidのカテゴリが設定された店舗を予約数が多い順に並べ替え、ページングされた状態で取得する
     @Query("SELECT s FROM Store s " +
            "INNER JOIN s.categoriesStores cs " +
@@ -118,7 +125,9 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
            "WHERE cs.category.id = :categoryId " +
            "GROUP BY s.id " +
            "ORDER BY AVG(rev.rating) DESC")
-    public Page<Store> findByCategoryIdOrderByAverageRatingDesc(@Param("categoryId") Integer categoryId, Pageable pageable);    
+    public Page<Store> findByCategoryIdOrderByAverageRatingDesc(@Param("categoryId") Integer categoryId, Pageable pageable);  
+    
+    
 
     public Page<Store> findByPriceMinLessThanEqualOrderByCreatedAtDesc(Integer price, Pageable pageable);
     public Page<Store> findByPriceMinLessThanEqualOrderByPriceMinAsc(Integer price, Pageable pageable);

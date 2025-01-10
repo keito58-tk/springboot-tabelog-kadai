@@ -26,15 +26,18 @@ public class CategoryStoreService {
         return categoryStoreRepository.findCategoryIdsByStoreOrderByIdAsc(store);
     }
 
+    // 指定されたカテゴリIDのリストと店舗に基づいて、カテゴリと店舗の関連付けを作成
     @Transactional
     public void createCategoriesStores(List<Integer> categoryIds, Store store) {
         for (Integer categoryId : categoryIds) {
             if (categoryId != null) {
+            	// カテゴリIDに基づいてカテゴリを検索
                 Optional<Category> optionalCategory = categoryService.findCategoryById(categoryId);
 
                 if (optionalCategory.isPresent()) {
                     Category category = optionalCategory.get();
 
+                    // カテゴリと店舗の関連付けが存在するか確認
                     Optional<CategoryStore> optionalCurrentCategoryStore = categoryStoreRepository.findByCategoryAndStore(category, store);
 
                     // 重複するエンティティが存在しない場合は新たにエンティティを作成する
@@ -43,6 +46,7 @@ public class CategoryStoreService {
                         categoryStore.setStore(store);
                         categoryStore.setCategory(category);
 
+                        // 新しいCategoryStoreエンティティを保存
                         categoryStoreRepository.save(categoryStore);
                     }
                 }
@@ -50,8 +54,10 @@ public class CategoryStoreService {
         }
     }
 
+    // 指定された新しいカテゴリIDのリストと店舗に基づいて、カテゴリと店舗の関連付けを同期
     @Transactional
     public void syncCategoriesStores(List<Integer> newCategoryIds, Store store) {
+    	// 店舗に関連するすべてのCategoryStoreエンティティを取得
         List<CategoryStore> currentCategoriesStores = categoryStoreRepository.findByStoreOrderByIdAsc(store);
 
         if (newCategoryIds == null) {
@@ -67,13 +73,16 @@ public class CategoryStoreService {
                 }
             }
 
+            // 新しいカテゴリIDに基づいて関連付けを作成または維持する
             for (Integer newCategoryId : newCategoryIds) {
                 if (newCategoryId != null) {
+                	// カテゴリIDに基づいてカテゴリを検索
                     Optional<Category> optionalCategory = categoryService.findCategoryById(newCategoryId);
 
                     if (optionalCategory.isPresent()) {
                         Category category = optionalCategory.get();
 
+                        // カテゴリと店舗の関連付けが存在するか確認
                         Optional<CategoryStore> optionalCurrentCategoryStore = categoryStoreRepository.findByCategoryAndStore(category, store);
 
                         // 重複するエンティティが存在しない場合は新たにエンティティを作成する
@@ -82,6 +91,7 @@ public class CategoryStoreService {
                             categoryStore.setStore(store);
                             categoryStore.setCategory(category);
 
+                            // 新しいCategoryStoreエンティティを保存
                             categoryStoreRepository.save(categoryStore);
                         }
                     }

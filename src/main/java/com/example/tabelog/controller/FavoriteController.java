@@ -39,16 +39,20 @@ public class FavoriteController {
                         RedirectAttributes redirectAttributes,
                         Model model)
     {
+    	// 認証されたユーザーを取得
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
             return "redirect:/subscription/register";
         }
 
+        // ユーザーのお気に入り店舗を取得（最新の順）
         Page<Favorite> favoritePage = favoriteService.findFavoritesByUserOrderByCreatedAtDesc(user, pageable);
 
+        // モデルにお気に入りページ情報を追加
         model.addAttribute("favoritePage", favoritePage);
 
         return "favorites/index";
@@ -60,16 +64,20 @@ public class FavoriteController {
                          RedirectAttributes redirectAttributes,
                          Model model)
     {
+    	// 認証されたユーザーを取得
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
             return "redirect:/subscription/register";
         }
 
+        // 指定された店舗を取得
         Optional<Store> optionalStore  = storeService.findStoreById(storeId);
 
+        // 店舗が存在しない場合、エラーメッセージを表示して店舗一覧にリダイレクト
         if (optionalStore.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "店舗が存在しません。");
 
@@ -78,6 +86,7 @@ public class FavoriteController {
 
         Store store = optionalStore.get();
 
+        // お気に入りを作成
         favoriteService.createFavorite(store, user);
         redirectAttributes.addFlashAttribute("successMessage", "お気に入りに追加しました。");
 
@@ -90,17 +99,22 @@ public class FavoriteController {
                          RedirectAttributes redirectAttributes,
                          HttpServletRequest httpServletRequest)
     {
+    	// 認証されたユーザーを取得
         User user = userDetailsImpl.getUser();
 
+        // ユーザーが無料プランの場合、サブスクリプション登録ページにリダイレクト
         if (user.getRole().getName().equals("ROLE_FREE_MEMBER")) {
             redirectAttributes.addFlashAttribute("subscriptionMessage", "この機能を利用するには有料プランへの登録が必要です。");
 
             return "redirect:/subscription/register";
         }
 
+        // 指定されたお気に入りを取得
         Optional<Favorite> optionalFavorite  = favoriteService.findFavoriteById(favoriteId);
+        // リファラヘッダーを取得（リダイレクト先に使用）
         String referer = httpServletRequest.getHeader("Referer");
 
+        // お気に入りが存在しない場合、エラーメッセージを表示してリファラページにリダイレクト
         if (optionalFavorite.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "お気に入りが存在しません。");
 
@@ -109,15 +123,18 @@ public class FavoriteController {
 
         Favorite favorite = optionalFavorite.get();
 
+        // ユーザーが所有していないお気に入りを削除しようとした場合、エラーメッセージを表示してリファラページにリダイレクト
         if (!favorite.getUser().getId().equals(user.getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "不正なアクセスです。");
 
             return "redirect:" + (referer != null ? referer : "/favorites");
         }
 
+        // お気に入り削除
         favoriteService.deleteFavorite(favorite);
         redirectAttributes.addFlashAttribute("successMessage", "お気に入りを解除しました。");
 
+        // リファラページにリダイレクト
         return "redirect:" + (referer != null ? referer : "/favorites");
     }
 }

@@ -46,6 +46,7 @@ public class UserService {
 		this.passwordResetPublisher = passwordResetPublisher;
     }    
     
+    // ユーザーを作成
     @Transactional
     public User create(SignupForm signupForm) {
         User user = new User();
@@ -73,6 +74,7 @@ public class UserService {
         return userRepository.save(user);
     }   
     
+    // ユーザー情報を更新
     @Transactional
     public void update(UserEditForm userEditForm) {
         User user = userRepository.getReferenceById(userEditForm.getId());
@@ -87,12 +89,14 @@ public class UserService {
         userRepository.save(user);
     } 
     
+    // Stripeの顧客IDをユーザーに設定
     @Transactional
     public void saveStripeCustomerId(User user, String stripeCustomerId) {
         user.setStripeCustomerId(stripeCustomerId);
         userRepository.save(user);
     }
 
+    // ユーザーのロールを更新
     @Transactional
     public void updateRole(User user, String roleName) {
         Role role = roleRepository.findByName(roleName);
@@ -124,6 +128,7 @@ public class UserService {
         return !userEditForm.getEmail().equals(currentUser.getEmail());      
     }
 
+    // ログインしているユーザーの取得
 	public User getLoggedInUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	    String email = authentication.getName();
@@ -139,6 +144,7 @@ public class UserService {
 		return userRepository.findByEmail(email);
 	}
 
+	// ロールの変更に伴い、認証情報を更新
 	public void refreshAuthenticationByRole(String newRole) {
 		// 現在の認証情報を取得する
         Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
@@ -201,16 +207,5 @@ public class UserService {
 		Optional<ResetToken> optionalResetToken = resetTokenService.findByToken(token);
 		return optionalResetToken.map(ResetToken :: getUser);
 	}
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

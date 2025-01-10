@@ -32,10 +32,13 @@ public class SignupEventListener {
         String confirmationUrl = signupEvent.getRequestUrl() + "/verify?token=" + token;
         String message = "以下のリンクをクリックして会員登録を完了してください。";
         
+        // メールメッセージを構築
         SimpleMailMessage mailMessage = new SimpleMailMessage(); 
         mailMessage.setTo(recipientAddress);
         mailMessage.setSubject(subject);
         mailMessage.setText(message + "\n" + confirmationUrl);
+        
+        // メール送信
         javaMailSender.send(mailMessage);
     }
 }
