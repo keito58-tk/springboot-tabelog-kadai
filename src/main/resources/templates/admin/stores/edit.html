@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>
+		
+		<div th:replace="~{fragment ::styles}"></div>
+		
+		<title>店舗情報編集</title>
+	</head>
+	<body>
+		<div class="tabelog-wrapper">
+			<!--ヘッダー-->
+			<div th:replace="~{fragment :: header}"></div>
+			<main>
+				<div class="container pt-4 pb-5 tabelog-container">
+					<div class="row justify-content-center">
+						<div class="col-xl-5 col-lg-8 col-md-8">
+							<nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+								<ol class="breadcrumb mb-0">
+									<li class="breadcrumb-item"><a th:href="@{/admin/stores}">店舗一覧</a></li>
+									<li class="breadcrumb-item"><a th:href="@{/admin/stores/__${storeEditForm.getId()}__}">店舗詳細</a></li>
+									<li class="breadcrumb-item active" aria-current="page">店舗情報編集</li>
+								</ol>
+							</nav>
+							
+							<h1 class="mb-4 text-center">店舗情報編集</h1>
+							
+							<form method="post" th:action="@{/admin/stores/__${storeEditForm.getId()}__/update}" th:object="${storeEditForm}" enctype="multipart/form-data">
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="name" class="col-form-label text-md-left fw-bold">店舗名</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2" th:errors="*{name}"></div>
+										<input type="text" class="col-control" th:field="*{name}" autofocus>
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="name" class="col-form-label text-md-left fw-bold">店舗画像</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('imageFile')}" class="text-danger small mb-2" th:errors="*{imageFile}"></div>
+										<input type="file" class="form-control" th:field="*{imageFile}">
+									</div>
+								</div>
+								
+								<!--選択された画像の表示場所-->
+								<div th:if="${imageName}" class="row" id="imagePreview"><img th:src="@{/storage/__${imageName}__}" class="mb-3"></div>
+								<div th:unless="${imageName}" class="row" id="imagePreview"></div>
+																
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="description" class="col-form-label text-md-left fw-bold">説明</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('description')}" class="text-danger small mb-2" th:errors="*{description}">
+										</div>
+										<textarea class="form-control" th:field="*{description}" cols="30" rows="5"></textarea>
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="priceMin" class="col-form-label text-md-left fw-bold">価格帯 (下限)</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('priceMin')}" class="text-danger small mb-2" th:errors="*{priceMin}"></div>
+										<input type="number" class="form-control" th:field="*{priceMin}">
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="priceMax" class="col-form-label text-md-left fw-bold">価格帯 (上限)</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('priceMax')}" class="text-danger small mb-2" th:errors="*{priceMax}"></div>
+										<input type="number" class="form-control" th:field="*{priceMax}">
+									</div>
+								</div>
+								
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="openingTime" class="col-form-label text-md-left fw-bold">営業時間(開店時間)</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('openingTime')}" class="text-danger small mb-2" th:errors="*{openingTime}">
+										</div>
+										<input type="time" class="form-control" th:field="*{openingTime}">
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="closingTime" class="col-form-label text-md-left fw-bold">営業時間(閉店時間)</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('closingTime')}" class="text-danger small mb-2" th:errors="*{closingTime}">
+										</div>
+										<input type="time" class="form-control" th:field="*{closingTime}">
+									</div>
+								</div>
+								
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="regularHoliday" class="col-form-label text-md-left fw-bold">定休日</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('regularHoliday')}" class="text-danger small mb-2"
+											th:errors="*{regularHoliday}"></div>
+										<input type="text" class="form-control" th:field="*{regularHoliday}">
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="postalCode" class="col-form-label text-md-left fw-bold">郵便番号</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('postalCode')}" class="text-danger small mb-2" th:errors="*{postalCode}"></div>
+										<input type="text" class="form-control" th:field="*{postalCode}">
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="address" class="col-form-label text-md-left fw-bold">住所</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('address')}" class="text-danger small mb-2" th:errors="*{address}"></div>
+										<input type="text" class="form-control" th:field="*{address}">
+									</div>
+								</div>
+								<div class="form-group row mb-3">
+									<div class="col-md-4">
+										<label for="phoneNumber" class="col-form-label text-md-left fw-bold">電話番号</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger small mb-2" th:errors="*{phoneNumber}">
+										</div>
+										<input type="text" class="form-control" th:field="*{phoneNumber}">
+									</div>
+								</div>
+								
+								<th:block th:each="i : ${#numbers.sequence(0, 2)}">
+                                    <div class="form-group row mb-3">
+                                        <label th:for="${'category' + (i + 1)}" class="col-md-5 col-form-label text-md-left fw-bold" th:text="${'カテゴリ' + (i + 1) + '（3つまで選択可）'}"></label>
+
+                                        <div class="col-md-7">
+                                            <select class="form-control form-select" th:id="${'category' + (i + 1)}" name="categoryIds[]">
+                                                <option value="">選択なし</option>
+                                                <div th:each="category : ${categories}">
+                                                    <option th:value="${category.id}"
+                                                            th:selected="${storeEditForm.categoryIds != null && i < storeEditForm.categoryIds.size() ? storeEditForm.categoryIds[i] == category.id : false}"
+                                                            th:text="${category.name}"></option>
+                                                </div>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </th:block>
+								
+								<div class="form-group d-flex justify-content-center my-4">
+									<button type="submit" class="btn text-white shadow-sm w-50 tabelog-btn">更新</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</main>
+			
+			
+			<!--フッター-->
+			<div th:replace="~{fragment :: footer}"></div>
+		</div>
+		
+		<div th:replace="~{fragment :: scripts}"></div>
+		<script th:src="@{/js/preview.js}"></script>
+	</body>
+</html>

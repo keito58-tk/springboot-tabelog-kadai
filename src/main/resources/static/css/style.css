@@ -1,0 +1,241 @@
+html {
+	font-size: 14px;
+}
+
+body {
+	font-family: 'Noto Sans JP', sans-serif;
+}
+
+h1 {
+	font-size: 1.5rem;
+}
+
+h2 {
+	font-size: 1.475rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+}
+
+a {
+	color: #5196a6;
+	text-decoration: none !important;
+}
+
+a:hover {
+	color: #407784;
+}
+
+footer {
+	width: 100%;
+	height: 60px;
+	position: absolute;
+	bottom: 0;
+	background-color: #f2f0eb;
+}
+
+.tabelog-wrapper {
+	min-height: 100vh;
+	position: relative;
+	padding-bottom: 60px;
+	box-sizing: border-box;
+}
+
+.tabelog-navber {
+	min-height: 60px;
+}
+
+.tabelog-logo {
+	height: 30px;
+}
+
+.tabelog-btn {
+	background-color: #5196a6 !important;
+	transition: 0.1s;
+}
+
+tabelog-btn:hover {
+	opacity: 0.8;
+}
+
+.tabelog-page-link {
+	color: #5196a6;
+}
+
+.tabelog-page-link:hover {
+	color: #407784;
+}
+
+.tabelog-active {
+	background-color: #5196a6 !important;
+	border-color: #5196a6 !important;
+}
+
+.tabelog-pre-wrap {
+	/*改行文字で行を折り返す*/
+	white-space: pre-wrap;
+}
+
+.tabelog-link-dager {
+	color: #f2594b;
+}
+
+.tabelog-link-dager:hover {
+	color: #a63c3c;
+}
+
+.tabelog-btn-danger {
+	background-color: #f2594b !important;
+	transition: 0.1s;
+}
+
+.tabelog-btn-danger:hover {
+	opacity: 0.8;
+}
+
+.tabelog-dropdown-item:active {
+	background-color: #5196a6;
+}
+
+.tabelog-card-link {
+	transition: 0.3s;
+}
+
+.tabelog-card-link:hover {
+	opacity: 0.7;
+}
+
+.tabelog-horizontal-card-image {
+	width: 100%;
+	height: 240px;
+	object-fit: cover;
+}
+
+.tabelog-sort-box {
+	width: 150px;
+}
+
+.tabelog-vertical-card-image {
+	width: 100%;
+	height: 150px;
+	object-fit: cover;
+}
+
+.tabelog-search-form {
+	max-width: 300px;
+}
+
+/* 星評価ここから */
+.tabelog-star-rating {
+	position: relative;
+	z-index: 0;
+	display: inline-block;
+	white-space: nowrap;
+	color: #cccccc;
+}
+
+.tabelog-star-rating:before,
+.tabelog-star-rating:after {
+	content: '★★★★★';
+}
+
+.tabelog-star-rating:after {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	color: #f29f05;
+}
+
+.tabelog-star-rating[data-rate="5.0"]:after {
+	width: 100%;
+}
+
+.tabelog-star-rating[data-rate="4.5"]:after {
+	width: 90%;
+}
+
+.tabelog-star-rating[data-rate="4.0"]:after {
+	width: 80%;
+}
+
+.tabelog-star-rating[data-rate="3.5"]:after {
+	width: 70%;
+}
+
+.tabelog-star-rating[data-rate="3.0"]:after {
+	width: 60%;
+}
+
+.tabelog-star-rating[data-rate="2.5"]:after {
+	width: 50%;
+}
+
+.tabelog-star-rating[data-rate="2.0"]:after {
+	width: 40%;
+}
+
+.tabelog-star-rating[data-rate="1.5"]:after {
+	width: 30%;
+}
+
+.tabelog-star-rating[data-rate="1.0"]:after {
+	width: 20%;
+}
+
+.tabelog-star-rating[data-rate="0.5"]:after {
+	width: 10%;
+}
+
+.tabelog-star-rating[data-rate="0.0"]:after {
+	width: 0%;
+}
+
+/* 星評価ここまで */
+
+/* flatpickrの土曜日の色 */
+.flatpickr-weekday:nth-child(7),
+.flatpickr-days .flatpickr-day:not(.flatpickr-disabled):not(.prevMonthDay):not(.nextMonthDay):nth-child(7n) {
+	color: #0421D9;
+}
+
+/* flatpickrの日曜日の色 */
+.flatpickr-weekday:nth-child(7n + 1),
+.flatpickr-day:not(.flatpickr-disabled):not(.prevMonthDay):not(.nextMonthDay):nth-child(7n + 1) {
+	color: #D90421;
+}
+
+/* flatpickrの選択された日付の色 */
+.flatpickr-day.selected {
+	background: #D95204 !important;
+	border-color: #D95204 !important;
+}
+
+/* クレジットカード番号入力フォーム */
+.tabelog-card-holder-name,
+.tabelog-card-element {
+	border-radius: .375rem;
+	padding: 12px;
+	border: 1px solid #ced4da;
+	height: 44px;
+	width: 100%;
+	background: white;
+}
+
+.tabelog-card-holder-name {
+	font-family: sans-serif;
+	outline: none;
+}
+
+.tabelog-card-error {
+	display: none;
+}
+
+@media screen and (min-width: 1400px) {
+	.tabelog-container {
+		max-width: 1200px;
+	}
+}

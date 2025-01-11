@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+ <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">    
+     <head>
+         <div th:replace="~{fragment :: meta}"></div>   
+              
+         <div th:replace="~{fragment :: styles}"></div>
+		 
+		 <!-- Flatpickr -->
+		 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+           
+         <title>店舗詳細</title>   
+     </head>
+     <body>
+         <div class="tabelog-wrapper">
+             <!-- ヘッダー -->
+             <div th:replace="~{fragment :: header}"></div>
+             
+             <main>
+                 <div class="container pt-4 pb-5 tabelog-container">
+                     <div class="row justify-content-center">
+                         <div class="col-xxl-9 col-xl-10 col-lg-11">
+                             <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                 <ol class="breadcrumb mb-0">                        
+                                     <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                     <li class="breadcrumb-item"><a th:href="@{/stores}">店舗一覧</a></li>
+                                     <li class="breadcrumb-item active" aria-current="page">店舗詳細</li>
+                                 </ol>
+                             </nav> 
+                             
+                             <h1 class="mb-4 text-center" th:text="${store.getName()}"></h1>                                                           
+                             
+                             <div th:if="${errorMessage}" class="alert alert-danger">
+                                 <span th:text="${errorMessage}"></span>
+                             </div>                                                                         
+                             
+							 <ul class="nav nav-tabs mb-2">
+                                 <li class="nav-item">
+                                     <a class="nav-link active text-white tabelog-bg" aria-current="page" th:href="@{/stores/__${store.id}__}">トップ</a>
+                                 </li>
+                                 <li class="nav-item">
+                                     <a class="nav-link link-dark" th:href="@{/stores/__${store.id}__/reservations/register}">予約</a>
+                                 </li>
+                                 <li class="nav-item">
+                                     <a class="nav-link link-dark" th:href="@{/stores/__${store.id}__/review}">レビュー</a>
+                                 </li>
+                             </ul>
+							 
+                             <div class="mb-4">
+                                 <img th:if="${store.getImageName()}" th:src="@{/storage/__${store.getImageName()}__}" class="w-100" alt="店舗画像">
+                                 <img th:unless="${store.getImageName()}" th:src="@{/images/noImage.png}" class="w-100" alt="NO IMAGE">
+                             </div> 
+                             
+                             <div class="container">  
+                                 <div class="row">
+                                     <div class="col-lg-8 container mb-4">            
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">店舗名</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span th:text="${store.getName()}"></span>
+                                             </div>
+                                         </div>                    
+                     
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">説明</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span class="tabelog-pre-wrap" th:text="${store.getDescription()}"></span>
+                                             </div>
+                                         </div>
+                     
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">価格帯</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span th:text="${#numbers.formatInteger(store.getPriceMax(), 1, 'COMMA') + '円' + '～'}"></span>
+                                             </div>
+                                         </div> 
+                                         
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">座席数</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span th:text="${store.getCapacity() + '席'}"></span>
+                                             </div>
+                                         </div>   
+										 
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">郵便番号</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span th:text="${store.getPostalCode()}"></span>
+                                             </div>
+                                         </div>    
+                                         
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">住所</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span th:text="${store.getAddress()}"></span>
+                                             </div>
+                                         </div>   
+                                         
+                                         <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">電話番号</span>
+                                             </div>
+                     
+                                             <div class="col">
+                                                 <span th:text="${store.getPhoneNumber()}"></span>
+                                             </div>
+                                         </div> 
+										 
+										 <div class="row pb-2 mb-2 border-bottom">
+                                             <div class="col-4">
+                                                 <span class="fw-bold">カテゴリ</span>
+                                             </div>
+ 
+                                             <div class="col">
+                                                 <div th:unless="${store.categoriesStores.isEmpty()}">
+                                                     <span th:each="categoryStore, stat : ${store.categoriesStores}" th:if="${stat.first}" th:text="${categoryStore.category.name}"></span><span th:each="categoryStore, stat : ${store.categoriesStores}" th:unless="${stat.first}" th:text="${'、' + categoryStore.category.name}"></span>
+                                                 </div>
+                                                 <div th:if="${store.categoriesStores.isEmpty()}">
+                                                     <span>未設定</span>
+                                                 </div>
+                                             </div>
+                                         </div>                               
+                                     </div>
+                                     
+									 <th:block sec:authorize="isAnonymous()">
+	                                     <div class="text-center">
+	                                         <a th:href="@{/login}" class="btn text-white shadow-sm w-50 tabelog-btn">♥ お気に入り追加</a>
+	                                     </div>
+	                                 </th:block>
+	                                 <th:block sec:authorize="isAuthenticated()">
+	                                     <form th:unless="${isFavorite}" method="post" th:action="@{/stores/__${store.id}__/favorites/create}" class="text-center">
+	                                         <button type="submit" class="btn text-white shadow-sm w-50 tabelog-btn">♥ お気に入り追加</button>
+	                                     </form>
+	                                     <form th:if="${isFavorite}" method="post" th:action="@{/favorites/__${favorite.id}__/delete}" class="text-center">
+	                                         <button type="submit" class="btn btn-outline-primary shadow-sm w-50 tabelog-remove-favorite-button">♥ お気に入り解除</button>
+	                                     </form>
+	                                 </th:block>
+									 
+
+                                 </div>                                                                                             
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </main>
+             
+             <!-- フッター -->
+             <div th:replace="~{fragment :: footer}"></div>
+         </div>    
+         
+         <div th:replace="~{fragment :: scripts}"></div>  
+		 
+		 <!-- Flatpickr -->
+	     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+	     <script th:src="@{/js/flatpickr.js}"></script>
+   </body>
+ </html>
