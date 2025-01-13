@@ -1,0 +1,27 @@
+Microsoft Windows [Version 10.0.26100.2605]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\pleiades\2024-03\eclipse\kadai_002\tabelog>heroku config
+=== tabelog Config Vars
+
+DB_PASSWORD:                  g8wzpw2931q687xo
+DB_URL:                       jdbc:mysql://r7i19bhzif1xfhm3
+DB_USERNAME:                  tix7nhx5ur4ecgvy
+JAWSDB_MARIA_PINK_URL:        mysql://crog97tbs4dwf61a:ujdy4vucspq0vd5m@u3r5w4ayhxzdrw87.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/exg6jm2u5nfabctq
+JAWSDB_MARIA_URL:             mysql://tix7nhx5ur4ecgvy:g8wzpw2931q687xo@un0jueuv2mam78uv.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/r7i19bhzif1xfhm3
+MAILGUN_API_KEY:              0c0e3a777c5c5dd8f04593ddfde965d4-7113c52e-6f770415
+MAILGUN_DOMAIN:               sandbox16c89bed05c64c66a1ca19e58275a8bc.mailgun.org
+MAILGUN_PUBLIC_KEY:           pubkey-cc9f26123f1b8f3a67a688631295cd5b
+MAILGUN_SMTP_LOGIN:           postmaster@sandbox16c89bed05c64c66a1ca19e58275a8bc.mailgun.org
+MAILGUN_SMTP_PASSWORD:        89627b079fc0ace30156a4315d292d69-7113c52e-3e9fce76
+MAILGUN_SMTP_PORT:            587
+MAILGUN_SMTP_SERVER:          smtp.mailgun.org
+MAIL_PASSWORD:                gdzwaydmuxquuwjl
+MAIL_USERNAME:                keito.cat.2468@gmail.com
+STRIPE_API_KEY:               sk_test_51PWI2ZRwbHQlEjnLf6Q8TsRAIXmXOmlAZEJni8V6nV3wF1BS35NNAvvOK7Q8meTdJe7tB6D0tvmA4K1umbcCaq8o00JPdV9Crf
+STRIPE_PREMIUM_PLAN_PRICE_ID: prod_R477D95YkNocw6
+STRIPE_SUCCESS_URL:           https://samurai-tabelog.herokuapp.com/reservations?reserved
+STRIPE_WEBHOOK_SECRET:        whsec_2l5Wf8AyFwAVADsqhR3xracysyMVi61s
+
+C:\pleiades\2024-03\eclipse\kadai_002\tabelog>
+
