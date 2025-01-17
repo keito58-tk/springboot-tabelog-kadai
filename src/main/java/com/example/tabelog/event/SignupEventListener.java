@@ -27,6 +27,7 @@ public class SignupEventListener {
         String token = UUID.randomUUID().toString();
         verificationTokenService.create(user, token);
         
+        String senderAddress = "keito1904@outlook.jp";
         String recipientAddress = user.getEmail();
         String subject = "メール認証";
         String confirmationUrl = signupEvent.getRequestUrl() + "/verify?token=" + token;
@@ -37,6 +38,7 @@ public class SignupEventListener {
         mailMessage.setTo(recipientAddress);
         mailMessage.setSubject(subject);
         mailMessage.setText(message + "\n" + confirmationUrl);
+        mailMessage.setFrom(senderAddress);
         
         // メール送信
         javaMailSender.send(mailMessage);

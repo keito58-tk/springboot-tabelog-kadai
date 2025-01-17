@@ -26,6 +26,7 @@ public class PasswordResetListener {
         String token = resetTokenService.createToken(user);
         
         // メール送信設定
+        String senderAddress = "keito1904@outlook.jp";
         String recipientAddress = user.getEmail();
         String subject = "パスワードリセットリクエスト";
         String confirmationUrl = event.getRequestUrl() + "/verify?token=" + token;
@@ -33,9 +34,11 @@ public class PasswordResetListener {
         
         // メールメッセージを構築
         SimpleMailMessage mailMessage = new SimpleMailMessage(); 
+        
         mailMessage.setTo(recipientAddress);
         mailMessage.setSubject(subject);
         mailMessage.setText(message + "\n" + confirmationUrl);
+        mailMessage.setFrom(senderAddress);
         
         // メール送信
         javaMailSender.send(mailMessage);
